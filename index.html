@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Labubu · Gaze</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; overflow: hidden; background: #191411; font-family: Inter, system-ui, -apple-system, "Noto Sans TC", sans-serif; }
+    canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+    .hud { position: fixed; inset: 0; z-index: 2; pointer-events: none; display: flex; align-items: flex-end; justify-content: space-between; padding: clamp(18px, 4vw, 44px); color: #fff9f0; text-shadow: 0 2px 16px #130b07; }
+    .title { font-size: clamp(22px, 4vw, 48px); font-weight: 800; letter-spacing: -.05em; line-height: .92; }
+    .hint { margin-top: 10px; font-size: 13px; opacity: .72; letter-spacing: .04em; }
+    .status { align-self: flex-start; padding: 9px 13px; border: 1px solid #ffffff33; border-radius: 99px; background: #1b1410a8; backdrop-filter: blur(12px); font-size: 12px; letter-spacing: .05em; }
+    .status.ready { opacity: 0; transition: opacity .6s ease; }
+    .error { max-width: min(92vw, 520px); line-height: 1.55; color: #ffe9e0; }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div><div class="title">Labubu<br>Gaze</div><div class="hint">移動游標，讓 Labubu 看向你</div></div>
+    <div id="status" class="status">正在載入模型…</div>
+  </div>
+
+  <script type="importmap">
+  { "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  } }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    // 可調參數 ---------------------------------------------------------------
+    const CONFIG = {
+      // 請把 GLB 與本檔案放在同一資料夾；若路徑不同，只需要改這一行。
+      modelUrl: './arloopa_labubu.glb',
+      background: 0x191411,
+      // 無獨立眼球時，頭部骨架的最大視線偏移（弧度）；維持很小才自然。
+      headYaw: 0.105,
+      headPitch: 0.055,
+      // 眼球本身存在時，該物件的最大轉動（弧度）。
+      eyeYaw: 0.26,
+      eyePitch: 0.15,
+      // 數字愈大反應愈快；使用 frame-rate independent easing。
+      easing: 8.5,
+      cameraFov: 30,
+    };
+
+    const status = document.querySelector('#status');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(CONFIG.background);
+    scene.fog = new THREE.Fog(CONFIG.background, 14, 34);
+
+    const camera = new THREE.PerspectiveCamera(CONFIG.cameraFov, innerWidth / innerHeight, 0.1, 100);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    document.body.appendChild(renderer.domElement);
+
+    scene.add(new THREE.HemisphereLight(0xffedd8, 0x3d2017, 2.15));
+    const key = new THREE.DirectionalLight(0xffe5c2, 4.3); key.position.set(5, 8, 7); scene.add(key);
+    const rim = new THREE.DirectionalLight(0xff8b58, 2.2); rim.position.set(-6, 4, -5); scene.add(rim);
+    const ground = new THREE.Mesh(new THREE.CircleGeometry(13, 64), new THREE.MeshStandardMaterial({ color: 0x100b08, roughness: 1 }));
+    ground.rotation.x = -Math.PI / 2; ground.position.y = -4.1; scene.add(ground);
+
+    const pointer = new THREE.Vector2();
+    const gaze = new THREE.Vector2();
+    const clock = new THREE.Clock();
+    const lookers = [];
+    let headBone = null, headBaseQuaternion = null, model = null;
+
+    function matchesEye(object) {
+      return /(?:eye|eyeball|iris|pupil|瞳)/i.test(object.name || '');
+    }
+
+    function prepareModel(root) {
+      // 此 GLB 的已知結構：臉部是 SM_Labubu.001_face_0（單一臉部蒙皮網格），
+      // 沒有獨立眼球/瞳孔；仍保留自動偵測，讓日後換模型時可直接使用眼球控制。
+      root.traverse((object) => {
+        if (matchesEye(object)) {
+          lookers.push({ object, base: object.quaternion.clone() });
+        }
+        if (/mixamorig:Head_06|(?:^|[_:.])head(?:$|[_:.])/i.test(object.name || '')) {
+          headBone ||= object;
+        }
+        if (object.isMesh) { object.frustumCulled = false; object.castShadow = object.receiveShadow = true; }
+      });
+      if (headBone) headBaseQuaternion = headBone.quaternion.clone();
+
+      // 自動置中、縮放：不依賴 GLB 原本尺寸，在手機與桌面皆維持合適構圖。
+      const box = new THREE.Box3().setFromObject(root);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      const maxSide = Math.max(size.x, size.y, size.z);
+      root.position.sub(center);
+      root.scale.setScalar(6.2 / maxSide);
+      root.updateMatrixWorld(true);
+      const normalized = new THREE.Box3().setFromObject(root);
+      const normalizedCenter = normalized.getCenter(new THREE.Vector3());
+      const normalizedSize = normalized.getSize(new THREE.Vector3());
+      camera.position.set(0, normalizedCenter.y + normalizedSize.y * 0.08, Math.max(normalizedSize.x, normalizedSize.y) * 1.95);
+      camera.lookAt(0, normalizedCenter.y + normalizedSize.y * 0.12, 0);
+      scene.add(root);
+
+      status.textContent = lookers.length
+        ? '眼球追蹤已啟用'
+        : '視線追蹤已啟用';
+      status.classList.add('ready');
+    }
+
+    new GLTFLoader().load(CONFIG.modelUrl, (gltf) => {
+      model = gltf.scene;
+      prepareModel(model);
+    }, (event) => {
+      if (event.total) status.textContent = `正在載入模型… ${Math.round(event.loaded / event.total * 100)}%`;
+    }, (error) => {
+      console.error(error);
+      status.className = 'status error';
+      status.textContent = '找不到 GLB。請確認 arloopa_labubu.glb 與 index.html 位於同一資料夾，並以本機伺服器開啟。';
+    });
+
+    addEventListener('pointermove', (event) => {
+      pointer.x = (event.clientX / innerWidth) * 2 - 1;
+      pointer.y = -((event.clientY / innerHeight) * 2 - 1);
+    }, { passive: true });
+    addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      const ease = 1 - Math.exp(-CONFIG.easing * dt);
+      gaze.lerp(pointer, ease);
+
+      if (lookers.length) {
+        // 獨立眼球模型：先保留原姿態，再加入局部 yaw/pitch。
+        for (const { object, base } of lookers) {
+          const offset = new THREE.Quaternion().setFromEuler(new THREE.Euler(-gaze.y * CONFIG.eyePitch, gaze.x * CONFIG.eyeYaw, 0, 'YXZ'));
+          object.quaternion.copy(base).multiply(offset);
+        }
+      } else if (headBone && headBaseQuaternion) {
+        // 此 GLB 的 fallback：眼睛在單一臉部貼圖內，無法獨立移動；
+        // 以極小、平滑的頭部骨架轉動表現視線，避免改動 mesh 或 UV 貼圖。
+        const offset = new THREE.Quaternion().setFromEuler(new THREE.Euler(-gaze.y * CONFIG.headPitch, gaze.x * CONFIG.headYaw, 0, 'YXZ'));
+        headBone.quaternion.copy(headBaseQuaternion).multiply(offset);
+      }
+      if (model) model.rotation.y = THREE.MathUtils.lerp(model.rotation.y, -gaze.x * 0.055, ease);
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>
