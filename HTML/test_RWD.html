@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <!-- ========================================
+       網頁基本設定
+       效果：設定中文語系與響應式顯示
+  ======================================== -->
+
+    <meta charset="UTF-8" />
+
+    <!-- 效果：讓手機依照實際螢幕寬度顯示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 效果：設定瀏覽器分頁名稱 -->
+    <title>清新未來感課程特色</title>
+
+    <style>
+      /* ========================================
+       01｜全域基礎設定
+       效果：統一所有元素尺寸計算方式
+    ======================================== */
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* ========================================
+       02｜網站整體基礎色
+       效果：
+       使用非常淡的冷白灰，
+       創造乾淨、科技、未來感背景
+    ======================================== */
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
+          sans-serif;
+
+        /* 清冷霧白 */
+        background: #f5f7f8;
+
+        /* 深墨黑，不使用純黑 */
+        color: #171a1d;
+
+        line-height: 1.6;
+      }
+
+      /* ========================================
+       03｜課程特色區域
+       效果：
+       使用極淡橘色光暈，
+       增加未來感與空間層次
+    ======================================== */
+
+      .course-features {
+        width: 100%;
+        padding: 100px 24px;
+
+        /* 清新橘色環境光 */
+        background: radial-gradient(
+          circle at 50% 0%,
+          rgba(255, 122, 61, 0.08),
+          transparent 45%
+        );
+      }
+
+      /* ========================================
+       04｜內容最大寬度
+       效果：控制內容最大寬度並保持置中
+    ======================================== */
+
+      .course-features__container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* ========================================
+       05｜標題區域
+       效果：建立乾淨、簡潔的視覺中心
+    ======================================== */
+
+      .course-features__header {
+        max-width: 680px;
+        margin: 0 auto 56px;
+        text-align: center;
+      }
+
+      /* ========================================
+       06｜英文小標
+       效果：
+       使用明亮數位橘，
+       建立科技品牌識別色
+    ======================================== */
+
+      .course-features__eyebrow {
+        display: inline-block;
+        margin-bottom: 12px;
+
+        font-size: 13px;
+        font-weight: 700;
+
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+
+        /* Digital Orange */
+        color: #f36f3d;
+      }
+
+      /* ========================================
+       07｜主標題
+       效果：
+       深墨色文字搭配冷白背景，
+       建立現代科技品牌的高級感
+    ======================================== */
+
+      .course-features__title {
+        margin-bottom: 16px;
+
+        font-size: clamp(32px, 4vw, 52px);
+        font-weight: 800;
+
+        line-height: 1.15;
+        letter-spacing: -0.04em;
+
+        /* 未來感深墨黑 */
+        color: #171a1d;
+      }
+
+      /* ========================================
+       08｜標題說明文字
+       效果：
+       使用冷灰色，
+       降低文字重量並保持清爽感
+    ======================================== */
+
+      .course-features__description {
+        font-size: 16px;
+
+        /* 冷霧灰 */
+        color: #70777d;
+      }
+
+      /* ========================================
+       09｜三欄 Grid
+       效果：
+       保留原本三欄平均排列與 24px 間距
+    ======================================== */
+
+      .course-features__grid {
+        display: grid;
+
+        /* 電腦版三欄 */
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+        /* 原本 24px 間距保持不變 */
+        gap: 24px;
+      }
+
+      /* ========================================
+       10｜課程卡片
+       效果：
+       使用純淨白色卡片，
+       與冷灰背景形成細微層次
+    ======================================== */
+
+      .course-feature-card {
+        position: relative;
+
+        min-width: 0;
+
+        padding: 40px 32px;
+
+        /* 清透白 */
+        background: #ffffff;
+
+        /* 極淡冷灰邊框 */
+        border: 1px solid #e3e7ea;
+
+        border-radius: 20px;
+
+        overflow: hidden;
+
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease,
+          border-color 0.3s ease;
+      }
+
+      /* ========================================
+       11｜卡片 Hover
+       效果：
+       滑鼠移入時卡片上浮，
+       使用橘色科技光暈增加未來感
+    ======================================== */
+
+      .course-feature-card:hover {
+        /* 保留原本上浮效果 */
+        transform: translateY(-6px);
+
+        /* 明亮橘色邊框 */
+        border-color: #07d6a9;
+
+        /* 柔和橘色科技光 */
+        box-shadow: 0 20px 50px #cef5ec;
+      }
+
+      /* ========================================
+       12｜卡片 Icon
+       效果：
+       使用高辨識度亮橘色，
+       成為整張卡片的視覺焦點
+    ======================================== */
+
+      .course-feature-card__icon {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        width: 56px;
+        height: 56px;
+
+        margin-bottom: 28px;
+
+        border-radius: 16px;
+
+        /* 現代數位橘 */
+        background: #f36f3d;
+
+        /* 冷白文字 */
+        color: #ffffff;
+
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      /* ========================================
+       13｜Feature 編號
+       效果：
+       使用淡冷灰，
+       讓資訊層級更加乾淨
+    ======================================== */
+
+      .course-feature-card__number {
+        margin-bottom: 8px;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        letter-spacing: 0.12em;
+
+        /* 科技冷灰 */
+        color: #9aa2a8;
+      }
+
+      /* ========================================
+       14｜卡片標題
+       效果：
+       使用深墨色建立主要閱讀層級
+    ======================================== */
+
+      .course-feature-card__title {
+        margin-bottom: 14px;
+
+        font-size: 24px;
+        font-weight: 800;
+
+        line-height: 1.3;
+        letter-spacing: -0.025em;
+
+        /* 深墨黑 */
+        color: #202428;
+      }
+
+      /* ========================================
+       15｜卡片內文
+       效果：
+       使用冷灰文字，
+       提升長文閱讀舒適度
+    ======================================== */
+
+      .course-feature-card__description {
+        font-size: 15px;
+
+        /* 冷灰 */
+        color: #6f777d;
+
+        line-height: 1.8;
+      }
+
+      /* ========================================
+       16｜手機版 RWD
+       效果：
+       768px 以下安全變成單欄
+    ======================================== */
+
+      @media (max-width: 768px) {
+        /* 手機背景保持冷白 */
+        .course-features {
+          padding: 72px 20px;
+        }
+
+        /* 手機標題區間距 */
+        .course-features__header {
+          margin-bottom: 40px;
+        }
+
+        /* ====================================
+         手機版單欄
+         效果：避免手機版內容擠壓
+      ==================================== */
+
+        .course-features__grid {
+          /* 強制手機單欄 */
+          grid-template-columns: 1fr !important;
+
+          /* 手機卡片間距 */
+          gap: 16px;
+        }
+
+        /* 手機卡片 */
+        .course-feature-card {
+          padding: 32px 24px;
+        }
+
+        /* 手機卡片標題 */
+        .course-feature-card__title {
+          font-size: 22px;
+        }
+
+        /* 手機內文 */
+        .course-feature-card__description {
+          font-size: 15px;
+        }
+      }
+
+      /* ========================================
+       17｜超小型手機
+       效果：
+       480px 以下維持舒適閱讀比例
+    ======================================== */
+
+      @media (max-width: 480px) {
+        /* 小螢幕區域留白 */
+        .course-features {
+          padding: 56px 16px;
+        }
+
+        /* 小手機主標 */
+        .course-features__title {
+          font-size: 32px;
+        }
+
+        /* 小手機說明文字 */
+        .course-features__description {
+          font-size: 14px;
+        }
+
+        /* 小手機卡片 */
+        .course-feature-card {
+          padding: 28px 22px;
+
+          /* 保留原本圓角 */
+          border-radius: 16px;
+        }
+
+        /* 小手機 Icon */
+        .course-feature-card__icon {
+          width: 50px;
+          height: 50px;
+
+          margin-bottom: 22px;
+
+          border-radius: 14px;
+        }
+      }
+
+      .card_icon img,
+      .card_icon02 img,
+      .card_icon01 img {
+        padding-left: 5px;
+        padding-bottom: 10px;
+        width: 80px;
+        height: 80px;
+        transition: transform 0.3s;
+        transform: scale(1);
+      }
+      .card_icon img:hover,
+      .card_icon02 img:hover,
+      .card_icon01 img:hover {
+        transform: scale(1.12);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ========================================
+       課程特色區塊 START
+       效果：建立完整課程特色區域
+  ======================================== -->
+
+    <section class="course-features">
+      <!-- ======================================
+         內容容器
+         效果：控制內容最大寬度並置中
+    ====================================== -->
+
+      <div class="course-features__container">
+        <!-- ====================================
+           標題區
+           效果：建立課程區塊主要視覺
+      ==================================== -->
+
+        <div class="course-features__header">
+          <!-- ==================================
+             英文標籤
+             效果：橘色科技品牌識別
+        ================================== -->
+
+          <span class="course-features__eyebrow"> Course Features </span>
+
+          <!-- ==================================
+             主標題
+             效果：深墨色建立主要視覺層級
+        ================================== -->
+
+          <h2 class="course-features__title">一套課程，掌握完整能力</h2>
+
+          <!-- ==================================
+             說明文字
+             效果：補充課程價值
+        ================================== -->
+
+          <p class="course-features__description">
+            從基礎概念到實際應用，透過系統化內容與實作，
+            幫助你一步一步建立真正能使用的專業能力。
+          </p>
+        </div>
+
+        <!-- ====================================
+           三欄課程特色 Grid
+           效果：桌面版呈現三張特色卡片
+      ==================================== -->
+
+        <div class="course-features__grid">
+          <!-- ==================================
+             FEATURE 01
+             效果：第一項課程特色
+        ================================== -->
+
+          <article class="course-feature-card">
+            <!-- 橘色科技 Icon -->
+           <div class="card_icon01">
+              <img
+                src="https://cdn-icons-png.flaticon.com/128/9693/9693244.png"
+                alt=""
+            <!-- Feature 編號 -->
+            <div class="course-feature-card__number">FEATURE 01</div>
+
+            <!-- 特色標題 -->
+            <h3 class="course-feature-card__title">系統化學習架構</h3>
+
+            <!-- 特色說明 -->
+            <p class="course-feature-card__description">
+              將複雜知識重新整理成清楚的學習路徑， 從基礎開始逐步建立完整觀念。
+            </p>
+          </article>
+
+          <!-- ==================================
+             FEATURE 02
+             效果：第二項課程特色
+        ================================== -->
+
+          <article class="course-feature-card">
+            <!-- 橘色科技 Icon -->
+            <div class="card_icon02">
+              <img
+                src="https://cdn-icons-png.flaticon.com/128/12414/12414781.png"
+                alt=""
+
+            <!-- Feature 編號 -->
+            <div class="course-feature-card__number">FEATURE 02</div>
+
+            <!-- 特色標題 -->
+            <h3 class="course-feature-card__title">實戰案例解析</h3>
+
+            <!-- 特色說明 -->
+            <p class="course-feature-card__description">
+              結合理論與實際案例，深入拆解操作流程，
+              讓學習內容不只是理解，更能真正應用。
+            </p>
+          </article>
+
+          <!-- ==================================
+             FEATURE 03
+             效果：第三項課程特色
+        ================================== -->
+
+          <article class="course-feature-card"><div class="card_icon">
+              <img
+                src="https://cdn-icons-png.flaticon.com/128/12414/12414749.png"
+                alt=""
+              />
+            </div>
+            <!-- 橘色科技 Icon -->
+
+            <!-- Feature 編號 -->
+            <div class="course-feature-card__number">FEATURE 03</div>
+
+            <!-- 特色標題 -->
+            <h3 class="course-feature-card__title">即學即用的技能</h3>
+
+            <!-- 特色說明 -->
+            <p class="course-feature-card__description">
+              每個單元都以實際成果為導向， 學完即可將所學技巧運用到自己的專案。
+            </p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================
+       課程特色區塊 END
+  ======================================== -->
+  </body>
+</html>
+```

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!-- 上一行宣告這是一份 HTML5 文件。 -->
+<!-- 設定網頁語言為繁體中文。 -->
+<html lang="zh-Hant">
+<!-- 開始網頁的設定區域。 -->
+<head>
+	<!-- 設定文字編碼，避免中文亂碼。 -->
+	<meta charset="UTF-8">
+	<!-- 讓網頁在不同螢幕寬度下正常顯示。 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- 設定瀏覽器分頁標題。 -->
+	<title>待辦事項</title>
+	<style>
+		/* :root 是全域範圍，適合集中保存可重複使用的 CSS 變數。 */
+		:root {
+			/* 以變數保存主要文字顏色，修改一處即可套用全站。 */
+			--ink: #17212b;
+			/* 以變數保存次要文字顏色，建立視覺層次。 */
+			--muted: #64727d;
+			/* 以變數保存頁面底色，方便統一管理主題。 */
+			--paper: #f4f7f2;
+			/* 以變數保存主要強調色，例如按鈕與 icon。 */
+			--accent: #e26d5a;
+			/* 以變數保存強調色的深色版本，供 hover 狀態使用。 */
+			--accent-dark: #b94b3c;
+		}
+
+		/* 讓元素的寬高包含 padding 與 border，較容易控制版面尺寸。 */
+		* { box-sizing: border-box; }
+
+		/* body 代表整個頁面內容，以下規則設定全頁的基礎外觀。 */
+		body {
+			/* 100vh 代表至少填滿一個視窗高度。 */
+			min-height: 100vh;
+			/* 移除瀏覽器預設外距，避免版面出現意外空白。 */
+			margin: 0;
+			/* clamp 會在最小值、彈性值與最大值之間自動調整內距。 */
+			padding: clamp(2rem, 8vw, 6rem) clamp(1rem, 6vw, 5rem);
+			/* var() 讀取前面定義的 CSS 變數。 */
+			color: var(--ink);
+			/* 依序提供主要字型與備用字型。 */
+			font-family: Georgia, 'Times New Roman', serif;
+			/* 設定頁面底色。 */
+			background: var(--paper);
+			/* radial-gradient 產生小圓點，形成低干擾的背景圖案。 */
+			background-image: radial-gradient(#d9e4dc 1px, transparent 1px);
+			/* 重複背景圖案，數值決定點與點之間的距離。 */
+			background-size: 22px 22px;
+		}
+
+		/* #add-card 以 id 選取新增卡片按鈕。 */
+		#add-card {
+			/* 設定按鈕文字與邊界之間的空間。 */
+			padding: .85rem 1.35rem;
+			/* border: 0 移除預設邊框。 */
+			border: 0;
+			/* 999px 讓按鈕呈現膠囊形狀。 */
+			border-radius: 999px;
+			/* 設定按鈕文字為白色。 */
+			color: #fff;
+			/* 一次設定字重、大小與字型。 */
+			font: 700 1rem system-ui, sans-serif;
+			/* 使用主題強調色作為按鈕背景。 */
+			background: var(--accent);
+			/* 用半透明色建立按鈕陰影。 */
+			box-shadow: 0 8px 18px #c65d4d40;
+			/* 將滑鼠游標變成可點擊樣式。 */
+			cursor: pointer;
+			/* 指定 hover 時的背景與位移要平滑過渡。 */
+			transition: transform .2s ease, background .2s ease;
+		}
+
+		/* :hover 代表滑鼠移到元素上方時的狀態。 */
+		#add-card:hover { background: var(--accent-dark); transform: translateY(-2px); }
+		/* :focus-visible 讓鍵盤操作時看得到清楚的 focus 外框。 */
+		#add-card:focus-visible, .card button:focus-visible { outline: 3px solid #2f7d72; outline-offset: 3px; }
+
+		/* 容器使用 id 選取，負責排列所有動態新增的卡片。 */
+		#container {
+			/* grid 讓子元素依網格排列。 */
+			display: grid;
+			/* auto-fit 會依可用寬度自動決定欄數。 */
+			grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+			/* 設定卡片之間的間距。 */
+			gap: 1.25rem;
+			/* 限制內容最大寬度，避免寬螢幕上過度分散。 */
+			max-width: 980px;
+			/* 讓卡片區與新增按鈕保持距離。 */
+			margin-top: 2rem;
+		}
+
+		/* .card 會套用到每一張動態建立的卡片。 */
+		.card {
+			/* relative 讓內部 absolute icon 以卡片作為定位基準。 */
+			position: relative;
+			/* 即使內容很少，卡片仍保有一致的最低高度。 */
+			min-height: 180px;
+			/* 增加卡片內部留白，提升閱讀性。 */
+			padding: 1.5rem;
+			/* 使用細邊框分隔卡片與背景。 */
+			border: 1px solid #d7e2da;
+			/* 讓卡片四角呈現圓角。 */
+			border-radius: 14px;
+			/* 使用偏暖白色作為卡片表面。 */
+			background: #fffdf8;
+			/* 陰影增加卡片的立體層次。 */
+			box-shadow: 0 14px 30px #29433b1c;
+			/* 套用卡片建立時的淡入動畫。 */
+			animation: card-in .45s ease both;
+		}
+
+		/* 設定卡片標題的外距與文字大小。 */
+		.card h3 { margin: 1.5rem 0 .5rem; font-size: 1.5rem; }
+		/* 設定描述文字的外距、顏色與行高。 */
+		.card p { margin: 0 0 1.5rem; color: var(--muted); line-height: 1.6; }
+		/* 移除刪除按鈕預設外觀，只保留文字指令感。 */
+		.card button { border: 0; color: var(--accent-dark); font: 700 .9rem system-ui, sans-serif; background: transparent; cursor: pointer; }
+		/* icon 是卡片右上角的裝飾元素。 */
+		.card-icon {
+			/* absolute 讓 icon 脫離一般排列流並固定在卡片內。 */
+			position: absolute;
+			/* 距離卡片上邊緣 1.15rem。 */
+			top: 1.15rem;
+			/* 距離卡片右邊緣 1.35rem。 */
+			right: 1.35rem;
+			/* 使用主題色顯示 icon。 */
+			color: var(--accent);
+			/* 設定 icon 字型與尺寸。 */
+			font: 1.5rem system-ui, sans-serif;
+			/* infinite 讓動畫持續循環播放。 */
+			animation: icon-float 1.8s ease-in-out infinite;
+		}
+
+		/* @keyframes 定義卡片從透明下移到正常位置的動畫過程。 */
+		@keyframes card-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+		/* 定義 icon 旋轉與上下浮動的循環動畫。 */
+		@keyframes icon-float { 0%, 100% { transform: rotate(0deg) translateY(0); } 50% { transform: rotate(12deg) translateY(-5px); } }
+		/* 使用者要求減少動態時，停用兩個動畫以提升舒適度。 */
+		@media (prefers-reduced-motion: reduce) { .card, .card-icon { animation: none; } }
+	</style>
+<!-- 結束網頁的設定區域。 -->
+</head>
+<!-- 開始網頁可見內容區域。 -->
+<body>
+	<!-- 建立新增卡片的按鈕與卡片容器。 -->
+	<button id="add-card" type="button">新增卡片</button>
+	<div id="container"></div>
+
+	<!-- 開始撰寫 JavaScript。 -->
+	<script>
+		// querySelector 依 CSS 選擇器尋找第一個符合條件的元素。
+		const addCardButton = document.querySelector('#add-card');
+		// 取得卡片容器的 DOM 參考，後續新增卡片都會放進這裡。
+		const container = document.querySelector('#container');
+
+		// addEventListener 註冊 click 事件，按鈕被點擊時才執行回呼函式。
+		addCardButton.addEventListener('click', () => {
+			// createElement 只建立元素節點，不會解析外部字串為 HTML。
+			const card = document.createElement('article');
+			// 建立卡片標題的 h3 元素。
+			const title = document.createElement('h3');
+			// 建立卡片描述用的 p 元素。
+			const description = document.createElement('p');
+			// 建立卡片專用的刪除按鈕。
+			const deleteButton = document.createElement('button');
+			// 建立顯示裝飾 icon 的 span 元素。
+			const icon = document.createElement('span');
+
+			// className 指定 CSS class，讓卡片套用 .card 的樣式。
+			card.className = 'card';
+			// 指定 icon 的 class，讓它取得定位與動畫樣式。
+			icon.className = 'card-icon';
+			// textContent 只設定純文字，不會執行文字中的 HTML 或 script。
+			icon.textContent = '✦';
+			// 以純文字設定標題，這是防範 XSS 的關鍵做法之一。
+			title.textContent = '新增卡片';
+			// 以純文字設定描述，避免不可信內容被當成 HTML 解析。
+			description.textContent = '輸入卡片描述文字。';
+			// type="button" 避免按鈕在表單中意外觸發提交行為。
+			deleteButton.type = 'button';
+			// 設定按鈕顯示文字，同樣不使用 innerHTML。
+			deleteButton.textContent = '刪除';
+			// append 依序將多個節點加入卡片，保留清楚的 DOM 結構。
+			card.append(icon, title, description, deleteButton);
+			// appendChild 將完整卡片插入容器最後方，畫面便會立即更新。
+			container.appendChild(card);
+		});
+
+		// 在父容器監聽 click，這種事件委派不必為每張新卡片個別註冊事件。
+		container.addEventListener('click', (event) => {
+			// 確認事件來源是 Element，避免對文字節點呼叫 Element 方法。
+			if (!(event.target instanceof Element)) return;
+			// closest 往上尋找最近的刪除按鈕，支援點擊按鈕內部子元素的情況。
+			const deleteButton = event.target.closest('button');
+			// 從刪除按鈕往上找到它所屬的 article 卡片。
+			const card = deleteButton?.closest('article');
+			// 只有找到按鈕與卡片，且卡片屬於本容器時才移除，避免誤刪其他元素。
+			if (deleteButton && card && container.contains(card)) card.remove();
+		});
+	<!-- 結束 JavaScript。 -->
+	</script>
+<!-- 結束網頁可見內容區域。 -->
+</body>
+<!-- 結束 HTML 文件。 -->
+</html>

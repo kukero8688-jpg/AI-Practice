@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>S — Tear &amp; Orange Editorial Header</title>
+    <style>
+      /* ============================================================
+   CSS:ROOT-START
+   設計語彙：Tear（深沈近黑基底）× Orange（品牌強調色）
+   ============================================================ */
+      :root {
+        --color-tear: #14110f; /* Tear 基底：深沈近黑、帶暖棕調，作為主要背景與文字基底 */
+        --color-tear-soft: #221d19; /* Tear 次階色，用於全螢幕選單漸層與卡片背景 */
+        --color-orange: #ff5a1f; /* Orange 主強調色，用於Hover、底線、焦點狀態 */
+        --color-orange-soft: #ffb37a; /* Orange 淺版，用於Logo漸層與光暈 */
+        --color-ivory: #f5efe6; /* 高級米白，作為深色背景上的主要文字色 */
+        --color-line: rgba(
+          245,
+          239,
+          230,
+          0.14
+        ); /* 極細邊框／分隔線顏色，維持低調高級感 */
+        --ease-luxury: cubic-bezier(0.22, 0.61, 0.36, 1);
+        /* 自訂緩動曲線：先快後緩，讓動畫呈現精緻的減速感，避免線性動畫的生硬感 */
+      }
+      /* CSS:ROOT-END */
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        /* 讓頁面內錨點捲動時保持平滑過渡，強化整體精緻感 */
+      }
+
+      body {
+        min-height: 260vh;
+        background: var(--color-tear);
+        color: var(--color-ivory);
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        /* 開啟次像素抗鋸齒，讓深色背景上的淺色文字邊緣更細緻 */
+      }
+
+      /* ============================================================
+   CSS:HEADER-START
+   ============================================================ */
+
+      .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 28px 56px;
+        background-color: rgba(20, 17, 15, 0);
+        border-bottom: 1px solid transparent;
+        transition:
+          padding 0.5s var(--ease-luxury),
+          background-color 0.5s var(--ease-luxury),
+          backdrop-filter 0.5s var(--ease-luxury),
+          border-color 0.5s var(--ease-luxury),
+          box-shadow 0.5s var(--ease-luxury);
+        /* 針對多個屬性分別設定 transition，滾動時的狀態切換才能同步且流暢 */
+      }
+
+      .site-header.is-scrolled {
+        padding: 16px 56px;
+        background-color: rgba(20, 17, 15, 0.72);
+        backdrop-filter: blur(14px) saturate(140%);
+        -webkit-backdrop-filter: blur(14px) saturate(140%);
+        /* 使用 backdrop-filter 模糊背景並提升飽和度，讓 Header 在滾動時呈現高級玻璃擬態質感 */
+        border-bottom: 1px solid var(--color-line);
+        box-shadow: 0 20px 40px -28px rgba(0, 0, 0, 0.7);
+        /* 大範圍模糊、負值擴散的陰影製造懸浮感，避免死板的實心陰影 */
+      }
+
+      /* --- Logo --- */
+
+      .logo {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border: 1px solid var(--color-line);
+        border-radius: 50%;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-decoration: none;
+        background: linear-gradient(
+          135deg,
+          var(--color-ivory) 0%,
+          var(--color-orange-soft) 55%,
+          var(--color-orange) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+        /* 使用漸層背景搭配 background-clip:text，讓 Logo 文字呈現細膩的品牌漸層光澤，而非單一平面色 */
+        transition:
+          transform 0.45s var(--ease-luxury),
+          border-color 0.45s var(--ease-luxury);
+        will-change: transform;
+        /* 預先提示瀏覽器此元素即將進行 transform 動畫，避免 Hover 當下才建立圖層造成掉幀 */
+      }
+
+      .logo::after {
+        content: "";
+        position: absolute;
+        inset: -8px;
+        z-index: -1;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 90, 31, 0.38),
+          transparent 70%
+        );
+        /* 建立品牌光暈：預設透明，Hover 時淡入，模擬精品 Logo 的微光互動 */
+        opacity: 0;
+        transition: opacity 0.45s var(--ease-luxury);
+      }
+
+      .logo:hover,
+      .logo:focus-visible {
+        transform: rotate(8deg) scale(1.08);
+        border-color: var(--color-orange);
+      }
+
+      .logo:hover::after,
+      .logo:focus-visible::after {
+        opacity: 1;
+      }
+
+      .logo:focus-visible {
+        outline: 1px solid var(--color-orange);
+        outline-offset: 6px;
+        /* 保留清楚可辨識的鍵盤焦點樣式，兼顧高級感與無障礙需求 */
+      }
+
+      /* --- Desktop Navigation --- */
+
+      .primary-nav {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .nav-link {
+        position: relative;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--color-ivory);
+        text-decoration: none;
+        opacity: 0.86;
+        padding: 6px 2px;
+        transition:
+          color 0.35s var(--ease-luxury),
+          opacity 0.35s var(--ease-luxury),
+          letter-spacing 0.35s var(--ease-luxury),
+          transform 0.35s var(--ease-luxury);
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        background: var(--color-orange);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s var(--ease-luxury);
+        /* 以 transform:scaleX 製作底線由左至右展開的動畫，效能優於直接改變 width 觸發重排 */
+      }
+
+      .nav-link:hover,
+      .nav-link:focus-visible {
+        color: var(--color-orange);
+        opacity: 1;
+        letter-spacing: 0.16em;
+        transform: translateY(-1px);
+      }
+
+      .nav-link:hover::after,
+      .nav-link:focus-visible::after {
+        transform: scaleX(1);
+      }
+
+      .nav-link:focus-visible {
+        outline: 1px solid var(--color-orange);
+        outline-offset: 4px;
+      }
+
+      /* --- Hamburger (Mobile Trigger) --- */
+
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 40px;
+        height: 40px;
+        background: transparent;
+        border: 1px solid var(--color-line);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: border-color 0.35s var(--ease-luxury);
+      }
+
+      .hamburger-bar {
+        width: 16px;
+        height: 1px;
+        background-color: var(--color-ivory);
+        transition:
+          transform 0.4s var(--ease-luxury),
+          opacity 0.4s var(--ease-luxury),
+          background-color 0.4s var(--ease-luxury);
+      }
+
+      .hamburger:hover,
+      .hamburger:focus-visible {
+        border-color: var(--color-orange);
+      }
+
+      .hamburger.is-active .hamburger-bar:nth-child(1) {
+        transform: translateY(6px) rotate(45deg);
+        background-color: var(--color-orange);
+      }
+
+      .hamburger.is-active .hamburger-bar:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger.is-active .hamburger-bar:nth-child(3) {
+        transform: translateY(-6px) rotate(-45deg);
+        background-color: var(--color-orange);
+      }
+      /* 三條線在展開狀態下組合成 X 圖示，取代生硬的圖示切換，提升微互動精緻度 */
+
+      /* --- Mobile Full-Screen Navigation --- */
+
+      .mobile-nav {
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 26px;
+        padding: 0 56px;
+        background: linear-gradient(
+          160deg,
+          var(--color-tear) 0%,
+          var(--color-tear-soft) 100%
+        );
+        /* 以微妙的斜向漸層取代單一死板底色，讓全螢幕選單保有層次感 */
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        /* 關閉狀態下阻擋滑鼠與觸控互動，避免使用者誤觸隱藏中的連結 */
+        transform: translateY(-12px);
+        transition:
+          opacity 0.5s var(--ease-luxury),
+          transform 0.5s var(--ease-luxury),
+          visibility 0.5s;
+      }
+
+      .mobile-nav.is-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+
+      .mobile-nav-link {
+        font-size: clamp(28px, 7vw, 44px);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--color-ivory);
+        text-decoration: none;
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 0.5s var(--ease-luxury),
+          transform 0.5s var(--ease-luxury),
+          color 0.3s var(--ease-luxury);
+      }
+
+      .mobile-nav.is-open .mobile-nav-link:nth-child(1) {
+        transition-delay: 0.05s;
+      }
+      .mobile-nav.is-open .mobile-nav-link:nth-child(2) {
+        transition-delay: 0.1s;
+      }
+      .mobile-nav.is-open .mobile-nav-link:nth-child(3) {
+        transition-delay: 0.15s;
+      }
+      .mobile-nav.is-open .mobile-nav-link:nth-child(4) {
+        transition-delay: 0.2s;
+      }
+      .mobile-nav.is-open .mobile-nav-link:nth-child(5) {
+        transition-delay: 0.25s;
+      }
+      /* 以 nth-child 搭配遞增的 transition-delay，讓選單項目逐一淡入，呈現有節奏的錯落動畫 */
+
+      .mobile-nav.is-open .mobile-nav-link {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .mobile-nav-link:hover,
+      .mobile-nav-link:focus-visible {
+        color: var(--color-orange);
+      }
+
+      /* --- Responsive: Tablet --- */
+
+      @media (max-width: 1024px) {
+        .site-header {
+          padding: 24px 32px;
+        }
+        .primary-nav {
+          gap: 16px;
+        }
+        .nav-link {
+          font-size: 11px;
+        }
+      }
+
+      /* --- Responsive: Mobile --- */
+
+      @media (max-width: 768px) {
+        .primary-nav {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+        .site-header {
+          padding: 20px 24px;
+        }
+        .mobile-nav {
+          padding: 0 32px;
+        }
+      }
+
+      /* --- Reduced Motion --- */
+
+      @media (prefers-reduced-motion: reduce) {
+        .site-header,
+        .logo,
+        .logo::after,
+        .nav-link,
+        .nav-link::after,
+        .hamburger-bar,
+        .mobile-nav,
+        .mobile-nav-link {
+          transition-duration: 0.01ms !important;
+        }
+        /* 尊重使用者「減少動態」的系統偏好設定，大幅縮短所有轉場時間 */
+      }
+
+      /* CSS:HEADER-END */
+
+      /* ============================================================
+   CSS:DEMO-CONTENT-START
+   以下樣式僅用於展示頁面滾動效果，非 Header 元件本身必要程式碼
+   ============================================================ */
+
+      .demo-section {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 16px;
+        padding: 0 56px;
+        max-width: 720px;
+      }
+
+      .demo-eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--color-orange);
+      }
+
+      .demo-title {
+        font-size: clamp(32px, 5vw, 56px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+
+      .demo-copy {
+        font-size: 15px;
+        line-height: 1.7;
+        color: rgba(245, 239, 230, 0.7);
+      }
+
+      @media (max-width: 768px) {
+        .demo-section {
+          padding: 0 24px;
+        }
+      }
+
+      /* CSS:DEMO-CONTENT-END */
+    </style>
+  </head>
+  <body>
+    <!-- SECTION:HEADER-START -->
+    <header class="site-header">
+      <a class="logo" href="#top" aria-label="S — 回到首頁">S</a>
+
+      <nav class="primary-nav" aria-label="主要導覽">
+        <a class="nav-link" href="#shop">SHOP</a>
+        <a class="nav-link" href="#new-arrivals">NEW ARRIVALS</a>
+        <a class="nav-link" href="#collection">COLLECTION</a>
+        <a class="nav-link" href="#about">ABOUT</a>
+        <a class="nav-link" href="#contact">CONTACT</a>
+      </nav>
+
+      <button
+        class="hamburger"
+        type="button"
+        aria-label="開啟選單"
+        aria-expanded="false"
+      >
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+
+      <nav class="mobile-nav" aria-label="行動裝置導覽" aria-hidden="true">
+        <a class="mobile-nav-link" href="#shop">SHOP</a>
+        <a class="mobile-nav-link" href="#new-arrivals">NEW ARRIVALS</a>
+        <a class="mobile-nav-link" href="#collection">COLLECTION</a>
+        <a class="mobile-nav-link" href="#about">ABOUT</a>
+        <a class="mobile-nav-link" href="#contact">CONTACT</a>
+      </nav>
+    </header>
+    <!-- SECTION:HEADER-END -->
+
+    <!-- SECTION:DEMO-CONTENT-START -->
+    <main id="top">
+      <section class="demo-section" id="shop">
+        <span class="demo-eyebrow">Tear &amp; Orange</span>
+        <h1 class="demo-title">向下滾動，觀察 Header 的玻璃質感轉場。</h1>
+        <p class="demo-copy">
+          此區塊僅作為展示用途，用來測試 Header
+          在滾動時的縮小、模糊背景與陰影效果，實際導入時可移除。
+        </p>
+      </section>
+      <section class="demo-section" id="new-arrivals">
+        <span class="demo-eyebrow">Section 02</span>
+        <h1 class="demo-title">導覽列在任何滾動位置皆保持清晰可讀。</h1>
+        <p class="demo-copy">
+          縮小視窗寬度可測試 Tablet 與 Mobile 響應式效果，行動裝置下會切換為
+          Hamburger Menu。
+        </p>
+      </section>
+    </main>
+    <!-- SECTION:DEMO-CONTENT-END -->
+
+    <script>
+      /* JS:HEADER-START */
+      (function () {
+        "use strict";
+
+        var header = document.querySelector(".site-header");
+        var hamburger = document.querySelector(".hamburger");
+        var mobileNav = document.querySelector(".mobile-nav");
+        var mobileLinks = document.querySelectorAll(".mobile-nav-link");
+
+        var SCROLL_THRESHOLD = 40;
+
+        function handleScroll() {
+          if (window.scrollY > SCROLL_THRESHOLD) {
+            header.classList.add("is-scrolled");
+          } else {
+            header.classList.remove("is-scrolled");
+          }
+        }
+
+        function closeMenu() {
+          hamburger.classList.remove("is-active");
+          mobileNav.classList.remove("is-open");
+          hamburger.setAttribute("aria-expanded", "false");
+          mobileNav.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("nav-open");
+        }
+
+        function openMenu() {
+          hamburger.classList.add("is-active");
+          mobileNav.classList.add("is-open");
+          hamburger.setAttribute("aria-expanded", "true");
+          mobileNav.setAttribute("aria-hidden", "false");
+          document.body.classList.add("nav-open");
+        }
+
+        function toggleMenu() {
+          var isOpen = hamburger.classList.contains("is-active");
+          if (isOpen) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        }
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        hamburger.addEventListener("click", toggleMenu);
+
+        mobileLinks.forEach(function (link) {
+          link.addEventListener("click", closeMenu);
+        });
+
+        // 當視窗寬度回到桌面尺寸時，自動關閉行動選單，避免狀態殘留
+        window.addEventListener("resize", function () {
+          if (window.innerWidth > 768) {
+            closeMenu();
+          }
+        });
+
+        handleScroll();
+      })();
+      /* JS:HEADER-END */
+    </script>
+  </body>
+</html>

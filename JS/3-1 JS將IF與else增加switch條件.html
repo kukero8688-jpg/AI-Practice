@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Switch</title>
+  </head>
+  <body>
+    <script>
+      // 宣告變數代表購買的飲料數量，這裡設定為 5 杯 (可隨意更換看條件變化)
+      let drinkCount = 1;
+
+      // 宣告變數儲存最終的會員等級，先不賦值
+      let memberLevel;
+
+      // 使用 if 判斷：如果數量大於或等於 10 杯
+      if (drinkCount >= 10) {
+        memberLevel = "VIP"; // 滿足條件就將等級設定為 VIP
+      }
+      // 使用 else if 檢查上一個不成立、但大於或等於 5 杯的情況
+      else if (drinkCount >= 5) {
+        memberLevel = "Gold"; // 滿足條件就將等級設定為 Gold（黃金會員）
+      }
+      // 如果以上條件都不滿足（即小於 5 杯）
+      else {
+        memberLevel = "Regular"; // 將等級設定為 Regular（一般會員）
+      }
+
+      // 宣告變數儲存最終的折扣成數
+      let discount;
+
+      // 使用 switch 根據剛才算出的會員等級（memberLevel）來決定折扣
+      switch (memberLevel) {
+        case "VIP": // 如果等級等於 'VIP'
+          discount = "8折優惠"; // 給予 8 折優惠
+          break; // break=結束判斷跳出迴圈
+        case "Gold": // 如果等級等於 'Gold'
+          discount = "9折優惠"; // 給予 9 折優惠
+          break;
+        default: // 如果都不是上述等級（即 Regular）
+          discount = "原價"; // 保持原價，沒有折扣
+      }
+
+      // 在控制台印出最終結果（預期會印出 會員跟優惠折扣數）
+      console.log(memberLevel,discount);
+    </script>
+  </body>
+</html>

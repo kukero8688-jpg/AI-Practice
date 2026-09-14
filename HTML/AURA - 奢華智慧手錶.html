@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA - 奢華智慧手錶</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js & Anime.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        body {
+            background-color: #f5f2eb; /* 質感米色背景 */
+            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        /* 固定 3D 畫布與光圈疊加層 */
+        #viewport-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 10;
+            pointer-events: none;
+        }
+        #webgl-canvas {
+            width: 100%;
+            height: 100%;
+        }
+        /* 可縮放動態光圈遮罩 */
+        .aperture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f1115;
+            mask-image: radial-gradient(circle at center, transparent 0%, black 0%);
+            -webkit-mask-image: radial-gradient(circle at center, transparent 0%, black 0%);
+        }
+        /* 捲動內容區塊 */
+        .scroll-section {
+            position: relative;
+            z-index: 20;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- 固定背景與 3D 畫布視窗 -->
+    <div id="viewport-container">
+        <canvas id="webgl-canvas"></canvas>
+        <div id="aperture" class="aperture-overlay"></div>
+    </div>
+
+    <!-- 頁面內容區塊（捲動時文字浮於上方） -->
+    <main class="relative z-20">
+        <!-- Section 1: Hero -->
+        <section class="scroll-section container mx-auto px-8 md:px-20 justify-start">
+            <div class="max-w-xl">
+                <p class="hero-sub text-xs tracking-[0.3em] font-semibold text-amber-700 uppercase mb-3 transform translate-y-10 opacity-0">Crafted Perfection</p>
+                <h1 class="hero-title text-6xl md:text-8xl font-serif font-bold text-slate-900 tracking-tight leading-none mb-6 transform translate-y-10 opacity-0">
+                    AURA <span class="text-3xl md:text-4xl block font-sans font-light mt-2 text-slate-600">Edition I</span>
+                </h1>
+                <span class="hero-num text-8xl md:text-[12rem] font-bold text-slate-200/50 absolute -z-10 -top-10 -left-10 select-none transform translate-y-10 opacity-0">01</span>
+                <p class="hero-desc text-slate-600 text-lg font-light leading-relaxed mb-8 transform translate-y-10 opacity-0">
+                    重塑工藝與極致智慧的交界點。航太級鈦金屬與動態健康環，專為追求卓絕的您打造。
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 2: Material & Glass -->
+        <section class="scroll-section container mx-auto px-8 md:px-20 justify-end">
+            <div class="max-w-md bg-white/40 backdrop-blur-md p-8 rounded-2xl border border-white/60 shadow-xl">
+                <span class="text-xs font-semibold text-amber-700 uppercase tracking-widest">Precision Engineering</span>
+                <h2 class="text-3xl font-serif font-bold text-slate-900 mt-2 mb-4">航太級鈦金屬與藍寶石水晶</h2>
+                <p class="text-slate-600 leading-relaxed font-light text-sm">
+                    金屬邊框經歷多道工序磨砂鏡面拋光，搭配雙曲面藍寶石玻璃鏡面，提供極致的抗刮與清透光學折射。
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 3: Smart Interface -->
+        <section class="scroll-section container mx-auto px-8 md:px-20 justify-start">
+            <div class="max-w-md bg-white/40 backdrop-blur-md p-8 rounded-2xl border border-white/60 shadow-xl">
+                <span class="text-xs font-semibold text-amber-700 uppercase tracking-widest">Dynamic Display</span>
+                <h2 class="text-3xl font-serif font-bold text-slate-900 mt-2 mb-4">即時健康追蹤錶面</h2>
+                <p class="text-slate-600 leading-relaxed font-light text-sm mb-4">
+                    高解析度動態畫布，即時渲染時間、活動卡路里、運動時長與站立目標。
+                </p>
+                <div class="flex gap-4 text-xs font-semibold">
+                    <span class="text-rose-500">● 動力 85%</span>
+                    <span class="text-emerald-500">● 鍛鍊 42m</span>
+                    <span class="text-sky-500">● 站立 10h</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- 1. Canvas 錶面動態繪製 ---
+        function createWatchFaceTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+
+            // 深藍奢華太陽紋底盤
+            const gradient = ctx.createRadialGradient(512, 512, 50, 512, 512, 500);
+            gradient.addColorStop(0, '#102a45'); 
+            gradient.addColorStop(1, '#050c17'); 
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1024, 1024);
+
+            // 太陽放射紋效果
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 360; i += 2) {
+                const rad = (i * Math.PI) / 180;
+                ctx.beginPath();
+                ctx.moveTo(512, 512);
+                ctx.lineTo(512 + Math.cos(rad) * 500, 512 + Math.sin(rad) * 500);
+                ctx.stroke();
+            }
+
+            // 品牌字樣
+            ctx.fillStyle = '#e2c792'; 
+            ctx.font = 'bold 36px "Times New Roman", serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('AURA LUXURY', 512, 340);
+            
+            ctx.fillStyle = '#a8946f';
+            ctx.font = '18px "Times New Roman", serif';
+            ctx.fillText('CHRONOGRAPH', 512, 380);
+
+            // 金屬條丁刻度 (12 個小時刻度)
+            ctx.strokeStyle = '#f3e5c8';
+            ctx.lineWidth = 12;
+            ctx.lineCap = 'round';
+            for (let i = 0; i < 12; i++) {
+                const angle = (i * 30 * Math.PI) / 180;
+                const innerR = (i % 3 === 0) ? 380 : 410;
+                const outerR = 450;
+                ctx.beginPath();
+                ctx.moveTo(512 + Math.cos(angle) * innerR, 512 + Math.sin(angle) * innerR);
+                ctx.lineTo(512 + Math.cos(angle) * outerR, 512 + Math.sin(angle) * outerR);
+                ctx.stroke();
+            }
+
+            // 太妃指針繪製
+            const now = new Date();
+            const hours = now.getHours() % 12;
+            const minutes = now.getMinutes();
+
+            const hRad = ((hours + minutes / 60) * 30 - 90) * (Math.PI / 180);
+            const mRad = (minutes * 6 - 90) * (Math.PI / 180);
+
+            // 時針
+            ctx.strokeStyle = '#f3e5c8';
+            ctx.lineWidth = 16;
+            ctx.beginPath();
+            ctx.moveTo(512, 512);
+            ctx.lineTo(512 + Math.cos(hRad) * 260, 512 + Math.sin(hRad) * 260);
+            ctx.stroke();
+
+            // 分針
+            ctx.lineWidth = 10;
+            ctx.beginPath();
+            ctx.moveTo(512, 512);
+            ctx.lineTo(512 + Math.cos(mRad) * 380, 512 + Math.sin(mRad) * 380);
+            ctx.stroke();
+
+            // 中心金屬軸心
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(512, 512, 20, 0, Math.PI * 2);
+            ctx.fill();
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        // --- 2. Three.js 場景建構 ---
+        const container = document.getElementById('viewport-container');
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 8);
+
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('webgl-canvas'), 
+            antialias: true, 
+            alpha: true 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.25;
+
+        // --- 光源與攝影棚打光配置 ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+
+        // 牆面背景聚光
+        const bgSpotLight = new THREE.SpotLight(0xffebd2, 12);
+        bgSpotLight.position.set(0, 0, -2);
+        bgSpotLight.target.position.set(0, 0, -10);
+        bgSpotLight.angle = Math.PI / 3;
+        bgSpotLight.penumbra = 0.8;
+        scene.add(bgSpotLight);
+        scene.add(bgSpotLight.target);
+
+        // 主光 (Key Light)
+        const keyLight = new THREE.DirectionalLight(0xfff8ee, 3.5);
+        keyLight.position.set(6, 8, 5);
+        scene.add(keyLight);
+
+        // 補光 (Fill Light)
+        const fillLight = new THREE.DirectionalLight(0x90b0d0, 1.8);
+        fillLight.position.set(-6, -3, 3);
+        scene.add(fillLight);
+
+        // 輪廓光 (Rim Light)
+        const rimLight = new THREE.DirectionalLight(0xffffff, 2.5);
+        rimLight.position.set(0, 5, -5);
+        scene.add(rimLight);
+
+        // --- 手錶 3D Group ---
+        const watchGroup = new THREE.Group();
+        scene.add(watchGroup);
+
+        // 材質定義
+        const metalMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xd8d8d8,
+            metalness: 1.0,
+            roughness: 0.12,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1,
+            reflectivity: 1.0
+        });
+
+        const bezelMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xc5a059, // 香檳金
+            metalness: 0.95,
+            roughness: 0.18,
+            clearcoat: 0.8
+        });
+
+        const glassMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.25,
+            roughness: 0.05,
+            transmission: 0.9,
+            thickness: 0.5,
+            ior: 1.5,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1
+        });
+
+        // 建立手錶模型
+        // 1. 金屬錶殼
+        const caseGeo = new THREE.CylinderGeometry(1.6, 1.6, 0.3, 64);
+        const caseMesh = new THREE.Mesh(caseGeo, metalMaterial);
+        watchGroup.add(caseMesh);
+
+        // 2. 錶圈
+        const bezelGeo = new THREE.TorusGeometry(1.58, 0.06, 16, 64);
+        bezelGeo.rotateX(Math.PI / 2);
+        const bezelMesh = new THREE.Mesh(bezelGeo, bezelMaterial);
+        bezelMesh.position.y = 0.12;
+        watchGroup.add(bezelMesh);
+
+        // 3. 錶面
+        const faceGeo = new THREE.CircleGeometry(1.5, 64);
+        const faceMat = new THREE.MeshBasicMaterial({ map: createWatchFaceTexture() });
+        const faceMesh = new THREE.Mesh(faceGeo, faceMat);
+        faceMesh.rotation.x = -Math.PI / 2;
+        faceMesh.position.y = 0.151;
+        watchGroup.add(faceMesh);
+
+        // 4. 反光玻璃
+        const glassGeo = new THREE.SphereGeometry(1.55, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.35);
+        const glassMesh = new THREE.Mesh(glassGeo, glassMaterial);
+        glassMesh.position.y = 0.05;
+        watchGroup.add(glassMesh);
+
+        // 5. 錶冠旋鈕
+        const crownGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.15, 32);
+        const crownMesh = new THREE.Mesh(crownGeo, metalMaterial);
+        crownMesh.rotation.z = Math.PI / 2;
+        crownMesh.position.set(1.7, 0, 0);
+        watchGroup.add(crownMesh);
+
+        // 預設角度
+        watchGroup.rotation.x = 0.6;
+        watchGroup.rotation.y = -0.4;
+
+        // --- 3. 動畫與互動控制 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const aperture = document.getElementById('aperture');
+            
+            // 入場光圈動畫
+            anime({
+                targets: { progress: 0 },
+                progress: 70,
+                duration: 2200,
+                easing: 'easeInOutCubic',
+                update: function(anim) {
+                    const val = anim.animations[0].currentValue;
+                    const maskValue = `radial-gradient(circle at center, transparent ${val}%, black ${val + 10}%)`;
+                    aperture.style.maskImage = maskValue;
+                    aperture.style.webkitMaskImage = maskValue;
+                }
+            });
+
+            // 文字滑入
+            anime({
+                targets: ['.hero-sub', '.hero-title', '.hero-num', '.hero-desc'],
+                translateY: [40, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(150, { start: 800 }),
+                duration: 1200,
+                easing: 'easeOutCubic'
+            });
+        });
+
+        // 滑鼠視差
+        let mouseX = 0, mouseY = 0;
+        let targetMouseX = 0, targetMouseY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 0.5;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 0.5;
+        });
+
+        // 捲動監聽
+        let scrollPercent = 0;
+        window.addEventListener('scroll', () => {
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            scrollPercent = Math.max(0, Math.min(1, window.scrollY / (maxScroll || 1)));
+        });
+
+        // 渲染迴圈
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 滑鼠緩衝效果
+            targetMouseX += (mouseX - targetMouseX) * 0.05;
+            targetMouseY += (mouseY - targetMouseY) * 0.05;
+
+            // 根據捲動進度計算姿態
+            let baseRotX = 0.6;
+            let baseRotY = -0.4;
+            let posX = 0;
+
+            if (scrollPercent < 0.5) {
+                const p = scrollPercent * 2;
+                baseRotX = THREE.MathUtils.lerp(0.6, 1.2, p);
+                baseRotY = THREE.MathUtils.lerp(-0.4, 0.8, p);
+                posX = THREE.MathUtils.lerp(0, -1.8, p);
+            } else {
+                const p = (scrollPercent - 0.5) * 2;
+                baseRotX = THREE.MathUtils.lerp(1.2, 0.2, p);
+                baseRotY = THREE.MathUtils.lerp(0.8, 0, p);
+                posX = THREE.MathUtils.lerp(-1.8, 1.5, p);
+            }
+
+            watchGroup.rotation.x = baseRotX + targetMouseY;
+            watchGroup.rotation.y = baseRotY + targetMouseX;
+            watchGroup.position.x = posX;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 視窗 Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

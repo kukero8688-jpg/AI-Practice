@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!-- 上一行宣告這是一份 HTML5 文件。 -->
+<!-- 設定網頁語言為繁體中文。 -->
+<html lang="zh-Hant">
+<!-- 開始網頁的設定區域。 -->
+<head>
+	<!-- 設定文字編碼，避免中文亂碼。 -->
+	<meta charset="UTF-8">
+	<!-- 讓網頁在不同螢幕寬度下正常顯示。 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- 設定瀏覽器分頁標題。 -->
+	<title>待辦事項</title>
+<!-- 結束網頁的設定區域。 -->
+</head>
+<!-- 開始網頁可見內容區域。 -->
+<body>
+	<!-- 建立讓使用者新增待辦事項的按鈕。 -->
+	<button id="add-todo" type="button">新增待辦事項</button>
+	<!-- 建立用來放置待辦事項的無序清單。 -->
+	<ul id="todo-list"></ul>
+
+	<!-- 開始撰寫 JavaScript。 -->
+	<script>
+		// 找到 id 為 add-todo 的按鈕。
+		const addTodoButton = document.querySelector('#add-todo');
+		// 找到 id 為 todo-list 的無序清單。
+		const todoList = document.querySelector('#todo-list');
+
+		// 監聽按鈕的 click 事件，使用者點擊時執行函式。
+		addTodoButton.addEventListener('click', () => {
+			// 建立一個新的 li 清單項目元素。
+			const todoItem = document.createElement('li');
+			// 將清單項目的文字設定為「買牛奶」。
+			todoItem.textContent = '買牛奶';
+			// 將新的清單項目加入 todo-list 無序清單中。
+			todoList.appendChild(todoItem);
+		// 結束按鈕點擊事件的函式。
+		});
+	<!-- 結束 JavaScript。 -->
+	</script>
+<!-- 結束網頁可見內容區域。 -->
+</body>
+<!-- 結束 HTML 文件。 -->
+</html>

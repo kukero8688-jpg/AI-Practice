@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Adventure Game UI</title>
+
+    <style>
+
+        /* ========================================
+           1. 基礎設定
+        ======================================== */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+
+        /* ========================================
+           2. Header
+           
+           Flexbox 水平排列
+           
+           Logo ←────────→ 玩家資訊
+        ======================================== */
+
+        header {
+            display: flex;
+
+            /* 主軸：水平 */
+            flex-direction: row;
+
+            /* 左右分開 */
+            justify-content: space-between;
+
+            /* 垂直置中 */
+            align-items: center;
+
+            padding: 15px 30px;
+
+            background: #172033;
+            border-bottom: 1px solid #29364d;
+        }
+
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+
+        /* 玩家資訊也是水平 Flex */
+
+        .player-info {
+            display: flex;
+
+            flex-direction: row;
+
+            align-items: center;
+
+            /* 元素之間距離 */
+            gap: 12px;
+        }
+
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            background: #3b82f6;
+
+            border-radius: 50%;
+        }
+
+
+        /* ========================================
+           3. 主畫面
+
+           左邊：遊戲內容
+           右邊：操作區
+
+           全部以水平 Flexbox 為主
+        ======================================== */
+
+        .game-layout {
+            display: flex;
+
+            /* 水平主軸 */
+            flex-direction: row;
+
+            /* 左右區域間距 */
+            gap: 20px;
+
+            padding: 25px 30px;
+        }
+
+
+        /* ========================================
+           4. 左側遊戲區
+        ======================================== */
+
+        .game-content {
+            flex: 1;
+
+            background: #172033;
+
+            border-radius: 10px;
+
+            padding: 22px;
+        }
+
+
+        .game-title {
+            display: flex;
+
+            flex-direction: row;
+
+            /* 標題與狀態左右分開 */
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+
+        .game-title h1 {
+            font-size: 28px;
+        }
+
+
+        .status {
+            padding: 6px 10px;
+
+            background: #14532d;
+            color: #86efac;
+
+            border-radius: 5px;
+
+            font-size: 13px;
+        }
+
+
+        /* ========================================
+           5. 遊戲畫面
+        ======================================== */
+
+        .game-screen {
+            height: 260px;
+
+            display: flex;
+
+            /* 水平排列 */
+            flex-direction: row;
+
+            /*
+                讓角色、敵人分布在畫面左右
+            */
+            justify-content: space-between;
+
+            /* 垂直置中 */
+            align-items: center;
+
+            padding: 25px;
+
+            background: #111827;
+
+            border-radius: 8px;
+
+            border: 1px solid #29364d;
+        }
+
+
+        .character {
+            text-align: center;
+        }
+
+
+        .character-icon {
+            font-size: 65px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .character-name {
+            color: #93c5fd;
+            font-weight: bold;
+        }
+
+
+        /* ========================================
+           6. HP Bar
+        ======================================== */
+
+        .hp-box {
+            width: 150px;
+
+            margin-top: 8px;
+        }
+
+
+        .hp-bar {
+            height: 8px;
+
+            background: #334155;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+        }
+
+
+        .hp {
+            width: 75%;
+            height: 100%;
+
+            background: #22c55e;
+        }
+
+
+        /* ========================================
+           7. 右側「操作控制區」
+
+           這是整個 UI 最重要的地方
+        ======================================== */
+
+        .control-panel {
+            width: 310px;
+
+            background: #172033;
+
+            padding: 20px;
+
+            border-radius: 10px;
+        }
+
+
+        .control-title {
+            margin-bottom: 15px;
+
+            font-size: 20px;
+        }
+
+
+        /* ========================================
+           8. 主要操作按鈕
+
+           水平排列
+        ======================================== */
+
+        .main-actions {
+            display: flex;
+
+            /*
+                按鈕以水平為主軸
+            */
+            flex-direction: row;
+
+            gap: 10px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .main-btn {
+            flex: 1;
+
+            padding: 14px 10px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            font-weight: bold;
+
+            font-size: 15px;
+
+            transition: 0.2s;
+        }
+
+
+        /*
+            主要行動：
+            使用者最希望完成的操作
+        */
+
+        .attack {
+            background: #ef4444;
+            color: white;
+        }
+
+
+        .attack:hover {
+            background: #dc2626;
+        }
+
+
+        /*
+            次要行動
+        */
+
+        .skill {
+            background: #8b5cf6;
+            color: white;
+        }
+
+
+        .skill:hover {
+            background: #7c3aed;
+        }
+
+
+        /* ========================================
+           9. 次要按鈕區
+
+           同樣使用水平 Flex
+        ======================================== */
+
+        .secondary-actions {
+            display: flex;
+
+            flex-direction: row;
+
+            gap: 8px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .small-btn {
+            flex: 1;
+
+            padding: 10px;
+
+            border: 1px solid #475569;
+
+            background: #243047;
+
+            color: white;
+
+            border-radius: 6px;
+        }
+
+
+        .small-btn:hover {
+            background: #334155;
+        }
+
+
+        /* ========================================
+           10. 操作提示
+
+           給使用者「下一步」的心理暗示
+        ======================================== */
+
+        .hint {
+            padding: 12px;
+
+            background: #1e293b;
+
+            border-left: 3px solid #60a5fa;
+
+            color: #cbd5e1;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+
+        /* ========================================
+           11. 底部功能列
+
+           水平 Flex
+        ======================================== */
+
+        .bottom-bar {
+            display: flex;
+
+            flex-direction: row;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-top: 20px;
+
+            padding-top: 15px;
+
+            border-top: 1px solid #29364d;
+        }
+
+
+        .quick-menu {
+            display: flex;
+
+            flex-direction: row;
+
+            gap: 8px;
+        }
+
+
+        .quick-btn {
+            padding: 8px 13px;
+
+            border: none;
+
+            background: #243047;
+
+            color: #cbd5e1;
+
+            border-radius: 5px;
+        }
+
+
+        .quick-btn:hover {
+            background: #334155;
+        }
+
+
+        /* ========================================
+           12. RWD
+
+           螢幕太小時才改成上下
+        ======================================== */
+
+        @media (max-width: 800px) {
+
+            .game-layout {
+                flex-direction: column;
+            }
+
+
+            .control-panel {
+                width: 100%;
+            }
+
+
+            .game-screen {
+                height: 220px;
+            }
+        }
+
+
+        @media (max-width: 500px) {
+
+            header {
+                padding: 12px 18px;
+            }
+
+
+            .game-layout {
+                padding: 15px;
+            }
+
+
+            .game-content {
+                padding: 15px;
+            }
+
+
+            /*
+                手機畫面才讓按鈕上下排列
+            */
+
+            .main-actions {
+                flex-direction: column;
+            }
+
+
+            .secondary-actions {
+                flex-direction: column;
+            }
+
+
+            .bottom-bar {
+                flex-direction: column;
+
+                gap: 12px;
+
+                align-items: stretch;
+            }
+
+
+            .quick-menu {
+                justify-content: center;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- ========================================
+         Header
+    ======================================== -->
+
+    <header>
+
+        <div class="logo">
+            ⚔️ ADVENTURE
+        </div>
+
+
+        <div class="player-info">
+
+            <span>Lv.32 冒險者</span>
+
+            <div class="avatar">
+                🧙
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ========================================
+         遊戲主要區域
+    ======================================== -->
+
+    <main class="game-layout">
+
+
+        <!-- ====================================
+             左側：遊戲內容
+        ==================================== -->
+
+        <section class="game-content">
+
+
+            <!-- 遊戲標題 -->
+
+            <div class="game-title">
+
+                <h1>森林深處</h1>
+
+                <span class="status">
+                    ● 戰鬥中
+                </span>
+
+            </div>
+
+
+
+            <!-- =================================
+                 遊戲畫面
+            ================================== -->
+
+            <div class="game-screen">
+
+
+                <!-- 玩家 -->
+
+                <div class="character">
+
+                    <div class="character-icon">
+                        🧙
+                    </div>
+
+                    <div class="character-name">
+                        冒險者
+                    </div>
+
+                    <div class="hp-box">
+
+                        <div class="hp-bar">
+                            <div class="hp"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- VS -->
+
+                <div>
+                    ⚡ VS ⚡
+                </div>
+
+
+
+                <!-- 敵人 -->
+
+                <div class="character">
+
+                    <div class="character-icon">
+                        👹
+                    </div>
+
+                    <div class="character-name">
+                        森林魔王
+                    </div>
+
+                    <div class="hp-box">
+
+                        <div class="hp-bar">
+
+                            <div
+                                class="hp"
+                                style="width: 45%; background:#ef4444;">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================
+                 底部快速功能
+            ================================== -->
+
+            <div class="bottom-bar">
+
+
+                <div>
+                    回合：<strong>12</strong>
+                </div>
+
+
+                <div class="quick-menu">
+
+                    <button class="quick-btn">
+                        🎒 背包
+                    </button>
+
+                    <button class="quick-btn">
+                        📜 任務
+                    </button>
+
+                    <button class="quick-btn">
+                        ⚙ 設定
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ====================================
+             右側：操作控制區
+        ==================================== -->
+
+        <aside class="control-panel">
+
+
+            <h2 class="control-title">
+                你的回合
+            </h2>
+
+
+            <!-- =================================
+                 主要操作
+
+                 最重要的按鈕放在最明顯位置
+            ================================== -->
+
+            <div class="main-actions">
+
+                <button class="main-btn attack">
+                    ⚔️ 普通攻擊
+                </button>
+
+                <button class="main-btn skill">
+                    ✨ 技能
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================
+                 次要操作
+            ================================== -->
+
+            <div class="secondary-actions">
+
+                <button class="small-btn">
+                    🛡 防禦
+                </button>
+
+                <button class="small-btn">
+                    🧪 道具
+                </button>
+
+                <button class="small-btn">
+                    🏃 逃跑
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================
+                 操作提示
+            ================================== -->
+
+            <div class="hint">
+
+                💡 建議：
+                敵人的生命值已經低於一半，
+                使用「普通攻擊」即可造成傷害。
+
+            </div>
+
+
+        </aside>
+
+    </main>
+
+
+</body>
+
+</html>

@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <title>設計師家具系列</title>
+
+    <!--
+  ============================================================
+  【為什麼用 <style> 統一寫在 head，而不是寫 inline style？】
+  題目要求「HTML 結構」與「CSS 樣式」完全分開撰寫。
+  分開的好處：
+  1. HTML 只負責「內容語意」，CSS 只負責「外觀呈現」，職責單一。
+  2. 未來要改版型（例如從 3 欄改 2 欄），只需要改 CSS，
+     完全不用去動 HTML 內容，降低維護與出錯風險。
+  3. class 命名可以重複使用在多個 <article> 上，避免重複寫樣式。
+  ============================================================
+-->
+    <style>
+      /* ---------- 全域重置：避免瀏覽器預設樣式干擾版面 ---------- */
+      * {
+        box-sizing: border-box; /* 讓 padding、border 都算在寬度內，
+                                 避免欄寬因為 padding 而被撐開變形，
+                                 這在做「等寬 3 欄」時特別重要 */
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Noto Serif TC", "PingFang TC", serif;
+        background-color: #f5f3ef; /* 米石色背景，襯托家具質感 */
+        color: #2b2723;
+        padding: 60px 5vw;
+      }
+
+      /* ============================================================
+     【外層大外殼】section.product-grid
+     為什麼用 <section> 而不是 <div>？
+     → <section> 是語意化標籤，代表「一個獨立的內容區塊」，
+       這裡整個區塊代表「商品列表」這個獨立單元，
+       對 SEO 與無障礙閱讀器（螢幕報讀）都更友善。
+     ============================================================ */
+      .product-grid {
+        /* 啟用 CSS Grid 排版：
+       這是題目規定的排版引擎，讓子元素可以用「格線」對齊，
+       而不是用 float 或 inline-block 那種舊式、脆弱的排法。 */
+        display: grid;
+
+        /* repeat(3, 1fr) 的意思：
+       建立 3 個「等寬」欄位，每欄佔可用空間的 1 等份（1fr）。
+       好處是欄寬會「自動」依容器寬度平均分配，
+       完全不用手動寫死任何 % 或 px 寬度，
+       容器變寬變窄，3 欄永遠保持等寬、對齊整齊。 */
+        grid-template-columns: repeat(3, 1fr);
+
+        /* gap 控制格子之間的間距（同時作用在水平與垂直方向）。
+       用 gap 取代舊式的 margin 寫法，
+       好處是「最外側不會多出一圈margin」，
+       欄與欄之間的間距永遠精準等於 24px，不會累加出錯。 */
+        gap: 24px;
+
+        max-width: 1200px;
+        margin: 0 auto; /* 讓整個區塊在頁面水平置中 */
+      }
+
+      /* ============================================================
+     【商品卡片】article.product-card
+     為什麼用 <article> 而不是 <div>？
+     → <article> 代表「可以獨立存在、獨立被引用的一則內容」，
+       例如一篇文章、一則貼文，或這裡的「一件商品」。
+       每張卡片抽離出去單獨看，仍然是完整、有意義的資訊單元，
+       這正是 <article> 語意上被設計來表達的情境。
+     ============================================================ */
+      .product-card {
+        background-color: #ffffff;
+        border-radius: 15px;
+
+        /* 卡片內部用 flex 直向排列（圖片 → 標題 → 描述 → 價格），
+       並非題目強制要求，但能讓「卡片內部元素」對齊更穩定，
+       這與最外層的 Grid 是兩個獨立、不衝突的排版系統。 */
+        display: flex;
+        flex-direction: column;
+
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .product-card:hover {
+        transform: translateY(
+          -6px
+        ); /* 滑鼠移入時輕微上浮，
+                                     暗示卡片「可互動」，
+                                     符合高級家具品牌常見的細膩微互動 */
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 商品圖片區：用固定比例的容器 + object-fit，
+     確保 3 張不同比例的原圖，最後在畫面上仍然「等高、等寬」，
+     避免因為圖片原始尺寸不同而讓 3 欄卡片高度參差不齊。 */
+      .product-card__image {
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover; /* 圖片等比縮放並裁切填滿容器，不變形 */
+        display: block;
+      }
+
+      .product-card__body {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1; /* 讓文字區塊撐滿卡片剩餘高度，
+                這樣「價格」與「加入詢問清單」按鈕
+                在 3 張卡片中能自然對齊在同一條水平線上 */
+      }
+
+      .product-card__eyebrow {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #a08a5f; /* 黃銅色，作為品牌強調色 */
+      }
+
+      .product-card__title {
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.4;
+      }
+
+      .product-card__desc {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 13px;
+        line-height: 2;
+        color: #6b6459;
+        flex: 1; /* 描述文字長短不一時，仍能把下方價格區塊推齊到底部 */
+      }
+
+      .product-card__footer {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding-top: 8px;
+        border-top: 1px solid #eee6da;
+      }
+
+      .product-card__price {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .product-card__cta {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-size: 12px;
+        letter-spacing: 0.05em;
+        color: #a08a5f;
+        text-decoration: none;
+        border-bottom: 1px solid #a08a5f;
+        padding-bottom: 2px;
+      }
+
+      /* ============================================================
+     RWD：手機寬度時，3 欄硬擠在一起會太窄、圖片變形，
+     所以在小螢幕改成單欄直向堆疊。
+     這裡只需要「覆寫 grid-template-columns」這一個屬性，
+     完全不用動 HTML，就是「HTML/CSS 分離」帶來的維護優勢展示。
+     ============================================================ */
+      @media (max-width: 720px) {
+        .product-grid {
+          grid-template-columns: 1fr; /* 手機版：1 欄 */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+    ============================================================
+    【HTML 結構說明】
+    section.product-grid
+      └── article.product-card  × 3   （每張卡片是獨立商品單元）
+            ├── img               商品圖
+            └── div.body          文字資訊區（品牌標籤／名稱／描述／價格）
+    整份 HTML 只描述「這裡有什麼內容、內容之間的階層關係」，
+    完全沒有任何 style="..." 或版面計算，版面全部交給外部 CSS 處理。
+    ============================================================
+  -->
+    <section class="product-grid">
+      <!-- 商品卡片 1 -->
+      <article class="product-card">
+        <img
+          class="product-card__image"
+          src="https://images.unsplash.com/photo-1503602642458-232111445657?w=600&q=80"
+          alt="胡桃木單椅"
+        />
+        <div class="product-card__body">
+          <span class="product-card__eyebrow">Signature Collection</span>
+          <h3 class="product-card__title">拾光 胡桃木休閒單椅</h3>
+          <p class="product-card__desc">
+            實心胡桃木框架搭配義大利植鞣皮革座墊，
+            手工打磨榫接工藝，呈現溫潤木質紋理。
+          </p>
+          <div class="product-card__footer">
+            <span class="product-card__price">NT$ 48,000</span>
+            <a class="product-card__cta" href="#">查看細節 →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 商品卡片 2 -->
+      <article class="product-card">
+        <img
+          class="product-card__image"
+          src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=600&q=80"
+          alt="大理石圓茶几"
+        />
+        <div class="product-card__body">
+          <span class="product-card__eyebrow">Stone Series</span>
+          <h3 class="product-card__title">陌上 大理石圓茶几</h3>
+          <p class="product-card__desc">
+            義大利進口天然大理石桌面，搭配黃銅底座，
+            紋理獨一無二，每件皆為限量款式。
+          </p>
+          <div class="product-card__footer">
+            <span class="product-card__price">NT$ 62,000</span>
+            <a class="product-card__cta" href="#">查看細節 →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 商品卡片 3 -->
+      <article class="product-card">
+        <img
+          class="product-card__image"
+          src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80"
+          alt="訂製布沙發"
+        />
+        <div class="product-card__body">
+          <span class="product-card__eyebrow">Living Collection</span>
+          <h3 class="product-card__title">歸雲 三人座訂製沙發</h3>
+          <p class="product-card__desc">
+            比利時亞麻布料，記憶泡棉搭配羽絨填充，
+            可依空間尺寸客製化長度與扶手造型。
+          </p>
+          <div class="product-card__footer">
+            <span class="product-card__price">NT$ 89,000</span>
+            <a class="product-card__cta" href="#">查看細節 →</a>
+          </div>
+        </div>
+      </article>
+      <!-- 商品卡片 3 -->
+      <article class="product-card">
+        <img
+          class="product-card__image"
+          src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80"
+          alt="訂製布沙發"
+        />
+        <div class="product-card__body">
+          <span class="product-card__eyebrow">Living Collection</span>
+          <h3 class="product-card__title">歸雲 三人座訂製沙發</h3>
+          <p class="product-card__desc">
+            比利時亞麻布料，記憶泡棉搭配羽絨填充，
+            可依空間尺寸客製化長度與扶手造型。
+          </p>
+          <div class="product-card__footer">
+            <span class="product-card__price">NT$ 89,000</span>
+            <a class="product-card__cta" href="#">查看細節 →</a>
+          </div>
+        </div>
+      </article>
+       <!-- 商品卡片 3 -->
+      <article class="product-card">
+        <img
+          class="product-card__image"
+          src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80"
+          alt="訂製布沙發"
+        />
+        <div class="product-card__body">
+          <span class="product-card__eyebrow">Living Collection</span>
+          <h3 class="product-card__title">歸雲 三人座訂製沙發</h3>
+          <p class="product-card__desc">
+            比利時亞麻布料，記憶泡棉搭配羽絨填充，
+            可依空間尺寸客製化長度與扶手造型。
+          </p>
+          <div class="product-card__footer">
+            <span class="product-card__price">NT$ 89,000</span>
+            <a class="product-card__cta" href="#">查看細節 →</a>
+          </div>
+        </div>
+      </article>
+    </section>
+  </body>
+</html>

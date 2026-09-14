@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111315" />
+  <title>課程特色｜Industrial Learning System</title>
+
+  <style>
+    /* =========================================================
+       01｜全域設定
+       效果：建立工業風網站的基礎色彩、字體與盒模型
+    ========================================================= */
+    :root {
+      --industrial-black: #111315;
+      --industrial-dark: #191c1e;
+      --industrial-panel: #222628;
+      --industrial-metal: #8f989b;
+      --industrial-light: #dfe3e2;
+      --industrial-white: #f4f3ee;
+      --industrial-orange: #ff6a21;
+      --industrial-orange-soft: #ff8a45;
+      --industrial-line: rgba(255,255,255,.12);
+      --industrial-shadow: 0 24px 60px rgba(0,0,0,.28);
+      --container: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      color: var(--industrial-white);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255,106,33,.10), transparent 30%),
+        linear-gradient(135deg, #101214 0%, #171a1c 52%, #0d0f10 100%);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    button,
+    a {
+      font: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       02｜工業風背景紋理
+       效果：用細格線與光暈製造金屬工廠、機械介面的氛圍
+    ========================================================= */
+    .industrial-page {
+      position: relative;
+      isolation: isolate;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .industrial-page::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: .18;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(to bottom, black, transparent 92%);
+    }
+
+    .industrial-page::after {
+      content: "";
+      position: fixed;
+      width: 520px;
+      height: 520px;
+      top: -260px;
+      right: -160px;
+      z-index: -1;
+      pointer-events: none;
+      border-radius: 50%;
+      background: rgba(255,106,33,.12);
+      filter: blur(90px);
+    }
+
+    /* =========================================================
+       03｜頂部導覽
+       效果：建立像工業品牌控制面板般的 Header
+    ========================================================= */
+    .industrial-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--industrial-line);
+      background: rgba(15,17,18,.82);
+      backdrop-filter: blur(18px);
+    }
+
+    .industrial-header__inner {
+      width: min(100% - 48px, var(--container));
+      min-height: 76px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .industrial-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .industrial-logo__mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      color: #111;
+      background: var(--industrial-orange);
+      clip-path: polygon(0 0, 100% 0, 100% 72%, 72% 100%, 0 100%);
+      font-size: 13px;
+    }
+
+    .industrial-logo__text {
+      font-size: 13px;
+    }
+
+    .industrial-nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .industrial-nav__link {
+      position: relative;
+      color: #aeb5b7;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      transition: color .25s ease;
+    }
+
+    .industrial-nav__link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      width: 0;
+      height: 2px;
+      background: var(--industrial-orange);
+      transition: width .25s ease;
+    }
+
+    .industrial-nav__link:hover {
+      color: #fff;
+    }
+
+    .industrial-nav__link:hover::after {
+      width: 100%;
+    }
+
+    /* =========================================================
+       04｜Hero
+       效果：以巨大 Typography、金屬面板與橘色警示色建立第一印象
+    ========================================================= */
+    .industrial-hero {
+      width: min(100% - 48px, var(--container));
+      min-height: 680px;
+      margin: 0 auto;
+      padding: 90px 0 80px;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      align-items: center;
+      gap: 70px;
+    }
+
+    .industrial-hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      color: var(--industrial-orange);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .industrial-hero__eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 2px;
+      background: var(--industrial-orange);
+      box-shadow: 10px 0 0 rgba(255,106,33,.35);
+    }
+
+    .industrial-hero__title {
+      max-width: 760px;
+      margin-bottom: 26px;
+      color: #f5f3ed;
+      font-size: clamp(48px, 7vw, 92px);
+      font-weight: 950;
+      line-height: .98;
+      letter-spacing: -.065em;
+      text-wrap: balance;
+    }
+
+    .industrial-hero__title span {
+      color: var(--industrial-orange);
+    }
+
+    .industrial-hero__description {
+      max-width: 620px;
+      color: #aeb4b5;
+      font-size: 17px;
+      line-height: 1.9;
+    }
+
+    .industrial-hero__actions {
+      margin-top: 38px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .industrial-button {
+      min-height: 50px;
+      padding: 0 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--industrial-orange);
+      background: var(--industrial-orange);
+      color: #111;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: transform .25s ease, background .25s ease, color .25s ease;
+    }
+
+    .industrial-button:hover {
+      transform: translateY(-3px);
+      background: #fff;
+      border-color: #fff;
+    }
+
+    .industrial-button--ghost {
+      background: transparent;
+      color: #e9e7e1;
+      border-color: rgba(255,255,255,.22);
+    }
+
+    .industrial-button--ghost:hover {
+      color: #111;
+    }
+
+    .industrial-hero__panel {
+      position: relative;
+      min-height: 440px;
+      padding: 30px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.015)),
+        #1c2022;
+      box-shadow: var(--industrial-shadow);
+      clip-path: polygon(0 0, 92% 0, 100% 8%, 100% 100%, 8% 100%, 0 92%);
+    }
+
+    .industrial-hero__panel::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(255,106,33,.28);
+      pointer-events: none;
+    }
+
+    .industrial-hero__panel::after {
+      content: "SYSTEM / 01";
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      color: rgba(255,255,255,.38);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .2em;
+    }
+
+    .industrial-hero__machine {
+      position: absolute;
+      width: 270px;
+      height: 270px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-55%);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, transparent 42%, rgba(255,106,33,.08) 43%, transparent 44%),
+        repeating-conic-gradient(from 0deg, rgba(255,255,255,.11) 0 2deg, transparent 2deg 18deg);
+      box-shadow: 0 0 90px rgba(255,106,33,.12);
+      animation: industrial-rotate 18s linear infinite;
+    }
+
+    .industrial-hero__machine::before,
+    .industrial-hero__machine::after {
+      content: "";
+      position: absolute;
+      inset: 22%;
+      border: 1px solid rgba(255,106,33,.55);
+      transform: rotate(45deg);
+    }
+
+    .industrial-hero__machine::after {
+      inset: 32%;
+      border-color: rgba(255,255,255,.28);
+      border-radius: 50%;
+      transform: none;
+    }
+
+    @keyframes industrial-rotate {
+      to { transform: translate(-50%,-55%) rotate(360deg); }
+    }
+
+    .industrial-hero__spec {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 18px;
+      border-top: 2px solid var(--industrial-orange);
+      background: rgba(8,9,10,.78);
+      backdrop-filter: blur(10px);
+    }
+
+    .industrial-hero__spec-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: #9ca4a6;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .industrial-hero__spec-value {
+      margin-top: 5px;
+      color: #fff;
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: -.02em;
+    }
+
+    /* =========================================================
+       05｜分隔資訊列
+       效果：加入像工業規格表的資訊節奏
+    ========================================================= */
+    .industrial-specbar {
+      border-top: 1px solid var(--industrial-line);
+      border-bottom: 1px solid var(--industrial-line);
+      background: rgba(255,255,255,.025);
+    }
+
+    .industrial-specbar__inner {
+      width: min(100% - 48px, var(--container));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .industrial-specbar__item {
+      min-height: 104px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 1px solid var(--industrial-line);
+    }
+
+    .industrial-specbar__item:last-child {
+      border-right: 0;
+    }
+
+    .industrial-specbar__label {
+      color: #777f82;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .16em;
+    }
+
+    .industrial-specbar__value {
+      margin-top: 3px;
+      color: #e7e5df;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    /* =========================================================
+       06｜課程特色區
+       效果：保留原始「三張特色卡片」內容與架構，重新設計視覺
+    ========================================================= */
+    .course-features {
+      position: relative;
+      width: 100%;
+      padding: 125px 24px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+        #141719;
+      background-size: 42px 42px;
+    }
+
+    .course-features::before {
+      content: "FEATURE MODULE";
+      position: absolute;
+      top: 38px;
+      right: 4%;
+      color: rgba(255,255,255,.06);
+      font-size: clamp(40px, 9vw, 130px);
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: -.06em;
+      pointer-events: none;
+    }
+
+    .course-features__container {
+      width: 100%;
+      max-width: var(--container);
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .course-features__header {
+      max-width: 720px;
+      margin: 0 0 58px;
+      text-align: left;
+    }
+
+    .course-features__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 14px;
+      color: var(--industrial-orange);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .course-features__eyebrow::before {
+      content: "●";
+      font-size: 9px;
+    }
+
+    .course-features__title {
+      margin-bottom: 16px;
+      color: #f2f0ea;
+      font-size: clamp(34px, 5vw, 60px);
+      font-weight: 950;
+      line-height: 1.08;
+      letter-spacing: -.055em;
+    }
+
+    .course-features__description {
+      max-width: 680px;
+      color: #969ea0;
+      font-size: 16px;
+    }
+
+    .course-features__grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .course-feature-card {
+      position: relative;
+      min-width: 0;
+      min-height: 430px;
+      padding: 34px 30px 30px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      background:
+        linear-gradient(150deg, rgba(255,255,255,.075), rgba(255,255,255,.018)),
+        #202426;
+      box-shadow: 0 18px 45px rgba(0,0,0,.22);
+      clip-path: polygon(0 0, 94% 0, 100% 6%, 100% 100%, 6% 100%, 0 94%);
+      transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+    }
+
+    .course-feature-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 42%;
+      height: 3px;
+      background: var(--industrial-orange);
+      transition: width .35s ease;
+    }
+
+    .course-feature-card::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      right: -75px;
+      bottom: -75px;
+      border: 1px solid rgba(255,106,33,.18);
+      border-radius: 50%;
+      transition: transform .4s ease;
+    }
+
+    .course-feature-card:hover {
+      transform: translateY(-9px);
+      border-color: rgba(255,106,33,.65);
+      box-shadow: 0 28px 65px rgba(0,0,0,.38), 0 0 40px rgba(255,106,33,.08);
+    }
+
+    .course-feature-card:hover::before {
+      width: 100%;
+    }
+
+    .course-feature-card:hover::after {
+      transform: scale(1.5);
+    }
+
+    /* =========================================================
+       07｜原始 Icon 區
+       效果：保留 card_icon / card_icon01 / card_icon02 命名，
+       三組圖片共用相同放大互動
+    ========================================================= */
+    .card_icon,
+    .card_icon01,
+    .card_icon02 {
+      position: relative;
+      width: 86px;
+      height: 86px;
+      margin-bottom: 32px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,106,33,.55);
+      background:
+        linear-gradient(135deg, rgba(255,106,33,.18), rgba(255,255,255,.035)),
+        #171a1b;
+      box-shadow: inset 0 0 25px rgba(255,106,33,.06);
+      transition: transform .3s ease, border-color .3s ease;
+    }
+
+    .card_icon::before,
+    .card_icon01::before,
+    .card_icon02::before {
+      content: "+";
+      position: absolute;
+      top: 5px;
+      right: 8px;
+      color: rgba(255,106,33,.55);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .card_icon img,
+    .card_icon02 img,
+    .card_icon01 img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      padding: 0;
+      transition: transform .3s ease, filter .3s ease;
+      transform: scale(1);
+    }
+
+    .card_icon img:hover,
+    .card_icon02 img:hover,
+    .card_icon01 img:hover {
+      transform: scale(1.16);
+      filter: drop-shadow(0 8px 16px rgba(255,106,33,.28));
+    }
+
+    .course-feature-card:hover .card_icon,
+    .course-feature-card:hover .card_icon01,
+    .course-feature-card:hover .card_icon02 {
+      border-color: var(--industrial-orange);
+      transform: rotate(-2deg);
+    }
+
+    .course-feature-card__number {
+      margin-bottom: 9px;
+      color: #747d80;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .18em;
+    }
+
+    .course-feature-card__title {
+      margin-bottom: 15px;
+      color: #f0eee8;
+      font-size: 25px;
+      font-weight: 900;
+      line-height: 1.3;
+      letter-spacing: -.035em;
+    }
+
+    .course-feature-card__description {
+      max-width: 360px;
+      color: #9ca4a6;
+      font-size: 15px;
+      line-height: 1.85;
+    }
+
+    .course-feature-card__index {
+      margin-top: auto;
+      padding-top: 32px;
+      color: rgba(255,255,255,.18);
+      font-size: 58px;
+      font-weight: 950;
+      line-height: .8;
+      letter-spacing: -.08em;
+    }
+
+    /* =========================================================
+       08｜底部 CTA
+       效果：用警示橘與黑色工業面板形成強烈收尾
+    ========================================================= */
+    .industrial-cta {
+      width: min(100% - 48px, var(--container));
+      margin: 0 auto;
+      padding: 110px 0 120px;
+    }
+
+    .industrial-cta__panel {
+      position: relative;
+      min-height: 280px;
+      padding: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.13);
+      background:
+        linear-gradient(110deg, rgba(255,106,33,.14), transparent 45%),
+        #1d2123;
+      box-shadow: var(--industrial-shadow);
+    }
+
+    .industrial-cta__panel::before {
+      content: "READY";
+      position: absolute;
+      right: -10px;
+      bottom: -35px;
+      color: rgba(255,255,255,.035);
+      font-size: 150px;
+      font-weight: 950;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .industrial-cta__eyebrow {
+      margin-bottom: 10px;
+      color: var(--industrial-orange);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .2em;
+    }
+
+    .industrial-cta__title {
+      color: #f5f2eb;
+      font-size: clamp(32px, 5vw, 58px);
+      font-weight: 950;
+      line-height: 1.05;
+      letter-spacing: -.05em;
+    }
+
+    /* =========================================================
+       09｜Footer
+       效果：完成完整一頁式網站結尾
+    ========================================================= */
+    .industrial-footer {
+      border-top: 1px solid var(--industrial-line);
+      background: #0d0f10;
+    }
+
+    .industrial-footer__inner {
+      width: min(100% - 48px, var(--container));
+      min-height: 90px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      color: #697174;
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+
+    /* =========================================================
+       10｜RWD
+       效果：平板與手機自動調整為舒適閱讀比例
+    ========================================================= */
+    @media (max-width: 900px) {
+      .industrial-hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding: 80px 0;
+      }
+
+      .industrial-hero__panel {
+        min-height: 380px;
+      }
+
+      .industrial-specbar__inner {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .industrial-specbar__item:nth-child(2) {
+        border-right: 0;
+      }
+
+      .industrial-specbar__item:nth-child(-n+2) {
+        border-bottom: 1px solid var(--industrial-line);
+      }
+
+      .course-features__grid {
+        grid-template-columns: 1fr;
+      }
+
+      .course-feature-card {
+        min-height: 360px;
+      }
+
+      .industrial-cta__panel {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .industrial-header__inner,
+      .industrial-hero,
+      .industrial-specbar__inner,
+      .industrial-cta,
+      .industrial-footer__inner {
+        width: min(100% - 32px, var(--container));
+      }
+
+      .industrial-header__inner {
+        min-height: 68px;
+      }
+
+      .industrial-nav {
+        display: none;
+      }
+
+      .industrial-hero {
+        padding: 65px 0;
+        gap: 45px;
+      }
+
+      .industrial-hero__title {
+        font-size: clamp(44px, 15vw, 70px);
+      }
+
+      .industrial-hero__description {
+        font-size: 15px;
+      }
+
+      .industrial-hero__panel {
+        min-height: 320px;
+        padding: 22px;
+      }
+
+      .industrial-hero__machine {
+        width: 210px;
+        height: 210px;
+      }
+
+      .industrial-specbar__item {
+        min-height: 90px;
+        padding: 18px 14px;
+      }
+
+      .course-features {
+        padding: 85px 16px;
+      }
+
+      .course-features__header {
+        margin-bottom: 42px;
+      }
+
+      .course-feature-card {
+        min-height: 350px;
+        padding: 28px 24px;
+      }
+
+      .course-feature-card__title {
+        font-size: 23px;
+      }
+
+      .industrial-cta {
+        padding: 75px 0;
+      }
+
+      .industrial-cta__panel {
+        padding: 35px 25px;
+      }
+
+      .industrial-footer__inner {
+        min-height: 110px;
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+      }
+    }
+
+    /* =========================================================
+       11｜降低動畫設定
+       效果：尊重使用者的系統動畫偏好
+    ========================================================= */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="industrial-page">
+
+    <!-- =======================================================
+         HEADER START
+         效果：工業品牌式固定導覽列
+    ======================================================== -->
+    <header class="industrial-header">
+      <div class="industrial-header__inner">
+        <a class="industrial-logo" href="#top" aria-label="回到首頁">
+          <span class="industrial-logo__mark">IF</span>
+          <span class="industrial-logo__text">Industrial Framework</span>
+        </a>
+
+        <nav class="industrial-nav" aria-label="主要導覽">
+          <a class="industrial-nav__link" href="#features">FEATURES</a>
+          <a class="industrial-nav__link" href="#system">SYSTEM</a>
+          <a class="industrial-nav__link" href="#start">START</a>
+        </nav>
+      </div>
+    </header>
+    <!-- HEADER END -->
+
+    <main id="top">
+
+      <!-- =====================================================
+           HERO START
+           效果：強烈工業 Typography + 金屬機械視覺
+      ====================================================== -->
+      <section class="industrial-hero">
+        <div class="industrial-hero__content">
+          <div class="industrial-hero__eyebrow">Industrial Learning System</div>
+
+          <h1 class="industrial-hero__title">
+            一套課程，<br />
+            掌握<span>完整能力</span>
+          </h1>
+
+          <p class="industrial-hero__description">
+            從基礎概念到實際應用，透過系統化內容與實作，
+            幫助你一步一步建立真正能使用的專業能力。
+          </p>
+
+          <div class="industrial-hero__actions">
+            <a class="industrial-button" href="#features">查看課程特色</a>
+            <a class="industrial-button industrial-button--ghost" href="#start">開始探索 →</a>
+          </div>
+        </div>
+
+        <div class="industrial-hero__panel" aria-hidden="true">
+          <div class="industrial-hero__machine"></div>
+
+          <div class="industrial-hero__spec">
+            <div class="industrial-hero__spec-top">
+              <span>Learning Engine</span>
+              <span>Online / Active</span>
+            </div>
+            <div class="industrial-hero__spec-value">03 CORE MODULES</div>
+          </div>
+        </div>
+      </section>
+      <!-- HERO END -->
+
+      <!-- =====================================================
+           SPEC BAR START
+           效果：像機械產品規格表一樣快速傳達資訊
+      ====================================================== -->
+      <section class="industrial-specbar" id="system" aria-label="課程規格">
+        <div class="industrial-specbar__inner">
+          <div class="industrial-specbar__item">
+            <span class="industrial-specbar__label">MODULE</span>
+            <strong class="industrial-specbar__value">03 核心能力</strong>
+          </div>
+          <div class="industrial-specbar__item">
+            <span class="industrial-specbar__label">METHOD</span>
+            <strong class="industrial-specbar__value">系統化學習</strong>
+          </div>
+          <div class="industrial-specbar__item">
+            <span class="industrial-specbar__label">MODE</span>
+            <strong class="industrial-specbar__value">案例 × 實作</strong>
+          </div>
+          <div class="industrial-specbar__item">
+            <span class="industrial-specbar__label">OUTPUT</span>
+            <strong class="industrial-specbar__value">即學即用</strong>
+          </div>
+        </div>
+      </section>
+      <!-- SPEC BAR END -->
+
+      <!-- =====================================================
+           課程特色區塊 START
+           效果：保留原始三欄課程內容，重新套用工業風視覺
+      ====================================================== -->
+      <section class="course-features" id="features">
+        <div class="course-features__container">
+
+          <div class="course-features__header">
+            <span class="course-features__eyebrow">Course Features</span>
+
+            <h2 class="course-features__title">一套課程，掌握完整能力</h2>
+
+            <p class="course-features__description">
+              從基礎概念到實際應用，透過系統化內容與實作，
+              幫助你一步一步建立真正能使用的專業能力。
+            </p>
+          </div>
+
+          <div class="course-features__grid">
+
+            <!-- FEATURE 01 -->
+            <article class="course-feature-card">
+              <div class="card_icon01">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/128/9693/9693244.png"
+                  alt="系統化學習架構"
+                />
+              </div>
+
+              <div class="course-feature-card__number">FEATURE 01</div>
+
+              <h3 class="course-feature-card__title">系統化學習架構</h3>
+
+              <p class="course-feature-card__description">
+                將複雜知識重新整理成清楚的學習路徑，
+                從基礎開始逐步建立完整觀念。
+              </p>
+
+              <div class="course-feature-card__index">01</div>
+            </article>
+
+            <!-- FEATURE 02 -->
+            <article class="course-feature-card">
+              <div class="card_icon02">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/128/12414/12414781.png"
+                  alt="實戰案例解析"
+                />
+              </div>
+
+              <div class="course-feature-card__number">FEATURE 02</div>
+
+              <h3 class="course-feature-card__title">實戰案例解析</h3>
+
+              <p class="course-feature-card__description">
+                結合理論與實際案例，深入拆解操作流程，
+                讓學習內容不只是理解，更能真正應用。
+              </p>
+
+              <div class="course-feature-card__index">02</div>
+            </article>
+
+            <!-- FEATURE 03 -->
+            <article class="course-feature-card">
+              <div class="card_icon">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/128/12414/12414749.png"
+                  alt="即學即用的技能"
+                />
+              </div>
+
+              <div class="course-feature-card__number">FEATURE 03</div>
+
+              <h3 class="course-feature-card__title">即學即用的技能</h3>
+
+              <p class="course-feature-card__description">
+                每個單元都以實際成果為導向，
+                學完即可將所學技巧運用到自己的專案。
+              </p>
+
+              <div class="course-feature-card__index">03</div>
+            </article>
+
+          </div>
+        </div>
+      </section>
+      <!-- 課程特色區塊 END -->
+
+      <!-- =====================================================
+           CTA START
+           效果：以工業警示橘色做強烈行動召喚
+      ====================================================== -->
+      <section class="industrial-cta" id="start">
+        <div class="industrial-cta__panel">
+          <div>
+            <div class="industrial-cta__eyebrow">READY TO BUILD</div>
+            <h2 class="industrial-cta__title">開始建立你的<br />下一項專業能力。</h2>
+          </div>
+
+          <a class="industrial-button" href="#features">EXPLORE MODULES →</a>
+        </div>
+      </section>
+      <!-- CTA END -->
+
+    </main>
+
+    <!-- =======================================================
+         FOOTER START
+         效果：完成一頁式網站結構
+    ======================================================== -->
+    <footer class="industrial-footer">
+      <div class="industrial-footer__inner">
+        <span>INDUSTRIAL LEARNING SYSTEM</span>
+        <span>© 2026 / ALL SYSTEMS READY</span>
+      </div>
+    </footer>
+    <!-- FOOTER END -->
+
+  </div>
+
+  <script>
+    /* =========================================================
+       JS｜導覽互動
+       效果：點擊導覽後使用平滑捲動，不使用 inline onclick
+    ========================================================= */
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener("click", (event) => {
+        const targetId = link.getAttribute("href");
+
+        if (!targetId || targetId === "#") return;
+
+        const target = document.querySelector(targetId);
+
+        if (target) {
+          event.preventDefault();
+          target.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

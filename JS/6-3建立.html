@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>使用者偏好設定測試</title>
+
+  <style>
+    /* ==============================
+       基本頁面樣式
+    ============================== */
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, "Microsoft JhengHei", sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+      min-height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+    }
+
+
+    /* ==============================
+       主要設定卡片
+    ============================== */
+
+    .preference-card {
+      width: min(90%, 500px);
+      padding: 32px;
+
+      background: #ffffff;
+      border-radius: 16px;
+
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+
+    /* 標題 */
+
+    .preference-title {
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+
+    /* 說明文字 */
+
+    .preference-description {
+      margin-bottom: 28px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+
+    /* ==============================
+       設定項目
+    ============================== */
+
+    .preference-item {
+      margin-bottom: 24px;
+    }
+
+    .preference-label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+
+    /* ==============================
+       Select 主題選擇
+    ============================== */
+
+    .theme-select {
+      width: 100%;
+      padding: 12px;
+
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+
+      font-size: 16px;
+    }
+
+
+    /* ==============================
+       通知開關
+    ============================== */
+
+    .notify-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .notify-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+
+    /* ==============================
+       按鈕
+    ============================== */
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .save-button,
+    .clear-button {
+      flex: 1;
+
+      padding: 12px 20px;
+
+      border: none;
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .save-button {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .clear-button {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .save-button:hover {
+      background: #1d4ed8;
+    }
+
+    .clear-button:hover {
+      background: #d1d5db;
+    }
+
+
+    /* ==============================
+       顯示目前資料
+    ============================== */
+
+    .result-box {
+      margin-top: 24px;
+      padding: 16px;
+
+      background: #f3f4f6;
+      border-radius: 8px;
+
+      font-family: monospace;
+      line-height: 1.8;
+
+      word-break: break-word;
+    }
+
+
+    /* ==============================
+       Dark Mode
+    ============================== */
+
+    body.dark-mode {
+      background: #111827;
+      color: #ffffff;
+    }
+
+    body.dark-mode .preference-card {
+      background: #1f2937;
+    }
+
+    body.dark-mode .preference-description {
+      color: #9ca3af;
+    }
+
+    body.dark-mode .theme-select {
+      background: #374151;
+      color: #ffffff;
+      border-color: #4b5563;
+    }
+
+    body.dark-mode .result-box {
+      background: #111827;
+    }
+
+    body.dark-mode .clear-button {
+      background: #374151;
+      color: #ffffff;
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <!-- ==============================
+       使用者偏好設定區域
+  ============================== -->
+
+  <main class="preference-card">
+
+    <h1 class="preference-title">
+      使用者偏好設定
+    </h1>
+
+    <p class="preference-description">
+      這個頁面示範如何使用 LocalStorage
+      儲存與讀取使用者 Preference。
+    </p>
+
+
+    <!-- 主題設定 -->
+
+    <div class="preference-item">
+
+      <label
+        class="preference-label"
+        for="themeSelect"
+      >
+        使用者主題
+      </label>
+
+      <select
+        class="theme-select"
+        id="themeSelect"
+      >
+        <option value="light">
+          Light
+        </option>
+
+        <option value="dark">
+          Dark
+        </option>
+      </select>
+
+    </div>
+
+
+    <!-- 通知設定 -->
+
+    <div class="preference-item">
+
+      <label class="preference-label">
+        通知開關
+      </label>
+
+      <div class="notify-wrapper">
+
+        <input
+          class="notify-checkbox"
+          type="checkbox"
+          id="notifyCheckbox"
+        >
+
+        <label for="notifyCheckbox">
+          開啟通知
+        </label>
+
+      </div>
+
+    </div>
+
+
+    <!-- 操作按鈕 -->
+
+    <div class="button-group">
+
+      <button
+        class="save-button"
+        id="saveButton"
+        type="button"
+      >
+        儲存設定
+      </button>
+
+      <button
+        class="clear-button"
+        id="clearButton"
+        type="button"
+      >
+        清除設定
+      </button>
+
+    </div>
+
+
+    <!-- 顯示目前 Preference -->
+
+    <div class="result-box">
+
+      <strong>目前 Preference：</strong>
+
+      <div id="result">
+        載入中...
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- ==============================
+       JavaScript
+  ============================== -->
+
+  <script>
+
+    // ==========================================
+    // 1. LocalStorage 使用的 Key
+    // ==========================================
+
+    const STORAGE_KEY = "userPreference";
+
+
+    // ==========================================
+    // 2. 預設的使用者偏好設定
+    //
+    // 如果 LocalStorage 沒有資料，
+    // 就會使用這個預設物件。
+    // ==========================================
+
+    const defaultPreference = {
+      theme: "dark",
+      notify: true
+    };
+
+
+    // ==========================================
+    // 3. 儲存 Preference
+    //
+    // 使用 JSON.stringify()
+    // 將 JavaScript 物件轉成 JSON 字串
+    // ==========================================
+
+    function savePreference(preference) {
+
+      try {
+
+        // 將物件轉換成 JSON 字串
+        const jsonData = JSON.stringify(preference);
+
+        // 寫入 LocalStorage
+        localStorage.setItem(
+          STORAGE_KEY,
+          jsonData
+        );
+
+        console.log("Preference 儲存成功：", jsonData);
+
+      } catch (error) {
+
+        // 防止 LocalStorage 發生錯誤
+        console.error(
+          "Preference 儲存失敗：",
+          error
+        );
+
+      }
+
+    }
+
+
+    // ==========================================
+    // 4. 讀取 Preference
+    //
+    // 使用 JSON.parse()
+    // 將 JSON 字串還原成 JavaScript 物件
+    // ==========================================
+
+    function getPreference() {
+
+      try {
+
+        // 從 LocalStorage 取得資料
+        const jsonData = localStorage.getItem(
+          STORAGE_KEY
+        );
+
+        .console.log('localStorage讀取原始資料:' rawData);
+        
+
+        // ======================================
+        // LocalStorage 沒有資料
+        //
+        // getItem() 會回傳 null
+        //
+        // 此時不要直接 JSON.parse(null)
+        // 而是回傳預設 Preference
+        // ======================================
+
+        if (jsonData === null) {
+
+          console.log(
+            "LocalStorage 沒有 Preference，使用預設設定"
+          );
+
+          return defaultPreference;
+
+        }
+
+
+        // ======================================
+        // 將 JSON 字串還原成 JavaScript 物件
+        // ======================================
+
+        const preference = JSON.parse(jsonData); 
+        .console.log('解析後資料:'parse);
+         
+
+
+        // 確認解析出來的是物件
+        if (
+          preference === null ||
+          typeof preference !== "object" ||
+          Array.isArray(preference)
+        ) {
+
+          console.warn(
+            "Preference 資料格式錯誤，使用預設設定"
+          );
+
+          return defaultPreference;
+
+        }
+
+
+        // ======================================
+        // 防呆：
+        // 如果某個欄位不存在，就使用預設值
+        // ======================================
+
+        return {
+
+          theme:
+            typeof preference.theme === "string"
+              ? preference.theme
+              : defaultPreference.theme,
+
+          notify:
+            typeof preference.notify === "boolean"
+              ? preference.notify
+              : defaultPreference.notify
+
+        };
+
+      } catch (error) {
+
+        // ======================================
+        // 如果 JSON.parse() 解析失敗，
+        // 不讓整個程式崩潰
+        // ======================================
+
+        console.error(
+          "Preference 讀取失敗，使用預設設定：",
+          error
+        );
+
+        return defaultPreference;
+
+      }
+
+    }
+
+
+    // ==========================================
+    // 5. 將 Preference 顯示在畫面上
+    // ==========================================
+
+    function displayPreference(preference) {
+
+      const resultElement =
+        document.querySelector("#result");
+
+      resultElement.textContent =
+        JSON.stringify(preference);
+
+    }
+
+
+    // ==========================================
+    // 6. 將 Preference 套用到網頁
+    // ==========================================
+
+    function applyPreference(preference) {
+
+      const themeSelect =
+        document.querySelector("#themeSelect");
+
+      const notifyCheckbox =
+        document.querySelector("#notifyCheckbox");
+
+
+      // 套用主題
+      themeSelect.value = preference.theme;
+
+
+      // 套用通知狀態
+      notifyCheckbox.checked = preference.notify;
+
+
+      // 如果是 dark 主題
+      if (preference.theme === "dark") {
+
+        document.body.classList.add(
+          "dark-mode"
+        );
+
+      } else {
+
+        document.body.classList.remove(
+          "dark-mode"
+        );
+
+      }
+
+    }
+
+
+    // ==========================================
+    // 7. 頁面載入時
+    //
+    // 讀取 LocalStorage 裡的 Preference
+    // ==========================================
+
+    const currentPreference =
+      getPreference();
+
+
+    // 將設定套用到網頁
+    applyPreference(
+      currentPreference
+    );
+
+
+    // 顯示目前設定
+    displayPreference(
+      currentPreference
+    );
+
+
+    // ==========================================
+    // 8. 儲存按鈕
+    // ==========================================
+
+    const saveButton =
+      document.querySelector("#saveButton");
+
+    saveButton.addEventListener(
+      "click",
+      function () {
+
+        // 取得目前選擇的主題
+        const theme =
+          document.querySelector("#themeSelect").value;
+
+
+        // 取得通知開關
+        const notify =
+          document.querySelector("#notifyCheckbox").checked;
+
+
+        // 建立 Preference 物件
+        const preference = {
+
+          theme: theme,
+
+          notify: notify
+
+        };
+
+
+        // 儲存 Preference
+        savePreference(
+          preference
+        );
+
+
+        // 套用設定
+        applyPreference(
+          preference
+        );
+
+
+        // 更新畫面
+        displayPreference(
+          preference
+        );
+
+
+        console.log(
+          "目前 Preference：",
+          preference
+        );
+
+      }
+    );
+
+
+    // ==========================================
+    // 9. 清除按鈕
+    //
+    // 用來測試：
+    // LocalStorage 沒有資料時，
+    // 是否會使用 defaultPreference
+    // ==========================================
+
+    const clearButton =
+      document.querySelector("#clearButton");
+
+    clearButton.addEventListener(
+      "click",
+      function () {
+
+        // 移除 LocalStorage 資料
+        localStorage.removeItem(
+          STORAGE_KEY
+        );
+
+
+        // 再次讀取
+        const preference =
+          getPreference();
+
+
+        // 套用預設設定
+        applyPreference(
+          preference
+        );
+
+
+        // 更新畫面
+        displayPreference(
+          preference
+        );
+
+
+        console.log(
+          "LocalStorage 已清除，目前使用預設 Preference：",
+          preference
+        );
+
+      }
+    );
+
+  </script>
+
+</body>
+
+</html>

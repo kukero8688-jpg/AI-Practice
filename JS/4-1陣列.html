@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>前端客製常打模板</title>
+  </head>
+  <body>
+    <h1>陣列</h1>
+    <p></p>
+  </body>
+  <script>
+    console.log("原始陣列:", numbers);
+    console.log("陣列長度:", numbers.length);
+    console.log("第一個元素:", numbers[0]);
+    console.log("最後一個元素:", numbers[numbers.length - 1]);
+
+    numbers.push(60);
+    console.log("加入 60 後的陣列:", numbers);
+    numbers.pop();
+    console.log("移除最後一個元素後的陣列:", numbers);
+
+    numbers.unshift(13);
+    console.log("在開頭加入 13 後的陣列:", numbers);
+    numbers.shift();
+    console.log("移除第一個元素後的陣列:", numbers);
+
+    numbers.splice(2, 0, 33);
+    console.log("在索引鍵 2 前加入 33 後的陣列:", numbers);
+
+    numbers.splice(2, 1);
+    console.log("移除索引鍵 2 的元素後的陣列:", numbers);
+
+    numbers.splice(3, 3, 20, 30);
+    console.log(
+      "從索引鍵 3 開始移除 3 個元素，並加入 20, 30 後的陣列:",
+      numbers,
+    );
+  </script>
+</html>

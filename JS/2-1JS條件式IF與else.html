@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>javascript基礎教學</title>
+  </head>
+  <body>
+    <script>
+      // 📥 步驟一：跳出輸入視窗，讓使用者輸入分數，並存進 score 變數
+      let score = prompt("請輸入學生分數 (0~100)");
+
+      // 🛠 步驟二：第一關海關——檢查「是不是純數字」
+      // /^\d+$/ 是正規表示式，意思是「只能有阿拉伯數字」。前面的 ! 代表「如果不是」
+      if (!/^\d+$/.test(score)) {
+        console.log("輸入錯誤：請輸入 0~100 的阿拉伯數字");
+      } else {
+        // 💡 如果是純數字，就用 Number() 把原本是字串的輸入，轉換成真正的「數字型態」
+        score = Number(score);
+
+        // 🛠 步驟三：第二關海關——檢查「數字範圍與評等」
+        if (score < 0 || score > 100) {
+          // || 代表「或者」。小於 0 或者 大於 100 都不行！
+          console.log("輸入錯誤：分數必須介於 0~100");
+        } else if (score >= 90) {
+          // 大於等於 90 分
+          console.log("優等");
+        } else if (score >= 80) {
+          // 80 ~ 89 分
+          console.log("甲等");
+        } else if (score >= 70) {
+          // 70 ~ 79 分
+          console.log("乙等");
+        } else {
+          // 69 分以下的所有情況
+          console.log("需再加油");
+        }
+      }
+    </script>
+  </body>
+</html>

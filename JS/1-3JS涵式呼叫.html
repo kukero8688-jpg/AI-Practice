@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>javascript基礎教學</title>
+  </head>
+  <body>
+    <script>
+      // 🛠【步驟一：打造氣象播報機】
+      // 名字叫 celsiusToFahrenheit
+      // 投料口有預設值：如果呼叫時沒給地點，預設是"台中"；沒給溫度，預設是 25 度。
+      function celsiusToFahrenheit(location = "台中", celsius = 25) {
+        // 這是舊式的寫法（被註解掉了，先不看它）
+        // return location + "的攝氏溫度 " + celsius + "°C 轉換為華氏溫度為：" + (celsius * 1.8 + 32) + "°F";
+
+        // 【步驟二：內部加工並吐出成品】
+        // 使用反單引號 `` 叫作「樣板字串」，可以用 ${} 直接把變數和數學公式塞進字串裡，非常直覺！
+        // 公式 (celsius * 1.8 + 32) 就是把攝氏轉成華氏的數學公式。
+        return `${location}的攝氏溫度 ${celsius}°C 轉換為華氏溫度為：${celsius * 1.8 + 32}°F`;
+      }
+
+      // 【步驟三：範例參考區】（被註解掉了，純參考）
+      // 呼叫機器算出結果後，用 const 常數接住，再用 clg 印出來
+      // const fahrenheit = celsiusToFahrenheit(25);
+      // console.log(fahrenheit); // 77
+
+      // 🏃‍♂️【步驟四：實際啟動機器測試（搭配 clg 監視器）】
+
+      // 測試 1：丟入 "台北" 和 35 度 = 算出來是 95°F
+      console.log(celsiusToFahrenheit("台北", 35));
+
+      // 測試 2：丟入 "台中" 和 45 度 =  113°F
+      console.log(celsiusToFahrenheit("新竹", 45));
+
+
+      // 測試 3：只丟入 "台南"，溫度沒給 ➡️ 機器會自動啟用預設值（25度），算出來是 77°F
+      console.log(celsiusToFahrenheit("台南"));
+    </script>
+  </body>
+</html>

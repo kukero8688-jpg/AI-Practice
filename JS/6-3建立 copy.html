@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+
+  <!--
+    設定手機版響應式比例。
+    原因：讓網頁在手機、平板與桌面裝置上都能正常顯示。
+  -->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Preference 儲存測試</title>
+
+  <style>
+    /* =========================================================
+       CSS：全域變數
+       ========================================================= */
+
+    :root {
+      --bg-color: #f4f4f5;
+      --card-color: #ffffff;
+      --text-color: #18181b;
+      --sub-text-color: #71717a;
+      --border-color: #e4e4e7;
+      --primary-color: #2563eb;
+      --danger-color: #dc2626;
+      --success-color: #16a34a;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+    }
+
+
+    /* =========================================================
+       Dark Theme
+       ========================================================= */
+
+    body.dark {
+      --bg-color: #09090b;
+      --card-color: #18181b;
+      --text-color: #fafafa;
+      --sub-text-color: #a1a1aa;
+      --border-color: #27272a;
+      --primary-color: #60a5fa;
+      --danger-color: #f87171;
+      --success-color: #4ade80;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+
+    /* =========================================================
+       基本 Reset
+       ========================================================= */
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    /* =========================================================
+       Body
+       ========================================================= */
+
+    body {
+      min-height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 24px;
+
+      background: var(--bg-color);
+      color: var(--text-color);
+
+      font-family:
+        Arial,
+        "Noto Sans TC",
+        sans-serif;
+
+      transition:
+        background 0.3s ease,
+        color 0.3s ease;
+    }
+
+
+    /* =========================================================
+       主容器
+       ========================================================= */
+
+    .app {
+      width: 100%;
+      max-width: 720px;
+    }
+
+
+    /* =========================================================
+       標題區
+       ========================================================= */
+
+    .header {
+      margin-bottom: 24px;
+    }
+
+    .header__label {
+      margin-bottom: 8px;
+
+      color: var(--primary-color);
+
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .header__title {
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.1;
+    }
+
+    .header__description {
+      margin-top: 12px;
+
+      color: var(--sub-text-color);
+
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+
+    /* =========================================================
+       Preference Card
+       ========================================================= */
+
+    .preference-card {
+      padding: 28px;
+
+      background: var(--card-color);
+
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+
+      box-shadow: var(--shadow);
+
+      transition:
+        background 0.3s ease,
+        border 0.3s ease;
+    }
+
+
+    /* =========================================================
+       設定項目
+       ========================================================= */
+
+    .setting {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 20px;
+
+      padding: 20px 0;
+
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .setting:first-child {
+      padding-top: 0;
+    }
+
+    .setting:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .setting__title {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .setting__description {
+      margin-top: 5px;
+
+      color: var(--sub-text-color);
+
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       Select
+       ========================================================= */
+
+    .theme-select {
+      min-width: 130px;
+
+      padding: 11px 14px;
+
+      background: var(--bg-color);
+      color: var(--text-color);
+
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+
+      outline: none;
+
+      font-size: 14px;
+
+      cursor: pointer;
+
+      transition: border 0.2s ease;
+    }
+
+    .theme-select:focus {
+      border-color: var(--primary-color);
+    }
+
+
+    /* =========================================================
+       Toggle 開關
+       ========================================================= */
+
+    .toggle {
+      position: relative;
+
+      width: 52px;
+      height: 30px;
+
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle__slider {
+      position: absolute;
+
+      inset: 0;
+
+      background: #71717a;
+
+      border-radius: 999px;
+
+      cursor: pointer;
+
+      transition: 0.3s ease;
+    }
+
+    .toggle__slider::before {
+      content: "";
+
+      position: absolute;
+
+      width: 22px;
+      height: 22px;
+
+      left: 4px;
+      top: 4px;
+
+      background: #ffffff;
+
+      border-radius: 50%;
+
+      transition: 0.3s ease;
+    }
+
+    .toggle input:checked + .toggle__slider {
+      background: var(--primary-color);
+    }
+
+    .toggle input:checked + .toggle__slider::before {
+      transform: translateX(22px);
+    }
+
+
+    /* =========================================================
+       Button 區域
+       ========================================================= */
+
+    .actions {
+      display: flex;
+
+      gap: 12px;
+
+      margin-top: 24px;
+    }
+
+    .button {
+      flex: 1;
+
+      padding: 13px 18px;
+
+      border: none;
+      border-radius: 10px;
+
+      font-size: 14px;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .button--primary {
+      background: var(--primary-color);
+      color: #ffffff;
+    }
+
+    .button--danger {
+      background: var(--danger-color);
+      color: #ffffff;
+    }
+
+
+    /* =========================================================
+       Status 狀態
+       ========================================================= */
+
+    .status {
+      margin-top: 20px;
+
+      padding: 14px 16px;
+
+      background: var(--bg-color);
+
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+
+      color: var(--sub-text-color);
+
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .status__text {
+      color: var(--success-color);
+      font-weight: 700;
+    }
+
+
+    /* =========================================================
+       LocalStorage Debug 區域
+       ========================================================= */
+
+    .storage-box {
+      margin-top: 20px;
+
+      padding: 20px;
+
+      background: var(--card-color);
+
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+    }
+
+    .storage-box__title {
+      margin-bottom: 12px;
+
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .storage-box__code {
+      display: block;
+
+      padding: 14px;
+
+      background: var(--bg-color);
+
+      border-radius: 10px;
+
+      color: var(--text-color);
+
+      font-family: Consolas, monospace;
+      font-size: 13px;
+
+      word-break: break-all;
+      line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       RWD：手機版
+       ========================================================= */
+
+    @media (max-width: 600px) {
+
+      body {
+        padding: 16px;
+      }
+
+      .preference-card {
+        padding: 20px;
+      }
+
+      .setting {
+        align-items: flex-start;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <!-- =========================================================
+       HTML：主要 App
+       ========================================================= -->
+
+  <main class="app">
+
+    <!-- =======================================================
+         標題
+         ======================================================= -->
+
+    <header class="header">
+
+      <p class="header__label">
+        LocalStorage Demo
+      </p>
+
+      <h1 class="header__title">
+        User Preference
+      </h1>
+
+      <p class="header__description">
+        測試使用 JavaScript 儲存與讀取使用者偏好設定。
+        Preference 會被轉換成 JSON 後儲存在 LocalStorage。
+      </p>
+
+    </header>
+
+
+    <!-- =======================================================
+         Preference 設定卡片
+         ======================================================= -->
+
+    <section class="preference-card">
+
+      <!-- =====================================================
+           Theme 設定
+           ===================================================== -->
+
+      <div class="setting">
+
+        <div>
+          <h2 class="setting__title">
+            使用者主題
+          </h2>
+
+          <p class="setting__description">
+            儲存 dark / light 主題設定。
+          </p>
+        </div>
+
+        <select
+          class="theme-select"
+          data-theme-select
+        >
+          <option value="dark">
+            Dark
+          </option>
+
+          <option value="light">
+            Light
+          </option>
+        </select>
+
+      </div>
+
+
+      <!-- =====================================================
+           Notification 設定
+           ===================================================== -->
+
+      <div class="setting">
+
+        <div>
+          <h2 class="setting__title">
+            通知開關
+          </h2>
+
+          <p class="setting__description">
+            控制使用者是否接收通知。
+          </p>
+        </div>
+
+
+        <label class="toggle">
+
+          <input
+            type="checkbox"
+            data-notify-toggle
+          >
+
+          <span class="toggle__slider"></span>
+
+        </label>
+
+      </div>
+
+
+      <!-- =====================================================
+           操作按鈕
+           ===================================================== -->
+
+      <div class="actions">
+
+        <button
+          class="button button--primary"
+          type="button"
+          data-save-button
+        >
+          儲存 Preference
+        </button>
+
+
+        <button
+          class="button button--danger"
+          type="button"
+          data-reset-button
+        >
+          清除 Preference
+        </button>
+
+      </div>
+
+
+      <!-- =====================================================
+           操作結果
+           ===================================================== -->
+
+      <div class="status">
+
+        狀態：
+
+        <span
+          class="status__text"
+          data-status
+        >
+          等待操作
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         LocalStorage Debug
+         ======================================================= -->
+
+    <section class="storage-box">
+
+      <h2 class="storage-box__title">
+        LocalStorage 目前資料
+      </h2>
+
+      <code
+        class="storage-box__code"
+        data-storage-output
+      >
+        尚未讀取
+      </code>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================================================
+       JavaScript
+       ========================================================= -->
+
+  <script>
+
+    /* =========================================================
+       1. LocalStorage Key
+       =========================================================
+
+       原因：
+       使用固定變數統一管理 LocalStorage 的 Key，
+       可以避免之後在不同程式碼區域寫錯名稱。
+    ========================================================= */
+
+    const PREFERENCE_KEY = 'userPreference';
+
+
+    /* =========================================================
+       2. 預設 Preference
+       =========================================================
+
+       原因：
+       如果使用者第一次進入網站，
+       LocalStorage 尚未存在資料，
+       就使用這組預設值。
+
+       這樣可以避免：
+       null.theme
+       null.notify
+
+       造成 JavaScript 錯誤。
+    ========================================================= */
+
+    const DEFAULT_PREFERENCE = {
+      theme: 'dark',
+      notify: true
+    };
+
+
+    /* =========================================================
+       3. 取得 HTML 元素
+       =========================================================
+
+       原因：
+       先取得需要操作的 DOM 元素，
+       後面就可以透過變數修改 UI。
+    ========================================================= */
+
+    const themeSelect =
+      document.querySelector('[data-theme-select]');
+
+    const notifyToggle =
+      document.querySelector('[data-notify-toggle]');
+
+    const saveButton =
+      document.querySelector('[data-save-button]');
+
+    const resetButton =
+      document.querySelector('[data-reset-button]');
+
+    const statusText =
+      document.querySelector('[data-status]');
+
+    const storageOutput =
+      document.querySelector('[data-storage-output]');
+
+
+    /* =========================================================
+       4. 儲存 Preference
+       =========================================================
+
+       原因：
+       LocalStorage 只能儲存字串，
+       因此 JavaScript Object 必須先經過
+       JSON.stringify() 轉換。
+
+       例如：
+
+       {
+         theme: 'dark',
+         notify: true
+       }
+
+       ↓ JSON.stringify()
+
+       {"theme":"dark","notify":true}
+    ========================================================= */
+
+    function savePreference(preference) {
+
+      /*
+        防呆檢查：
+
+        確認 preference 是一個有效物件。
+
+        原因：
+        避免傳入 null、字串、數字等錯誤資料。
+      */
+      if (
+        !preference ||
+        typeof preference !== 'object' ||
+        Array.isArray(preference)
+      ) {
+        return false;
+      }
+
+
+      try {
+
+        /*
+          JSON.stringify()
+
+          原因：
+          將 JavaScript Object 轉換成 JSON 字串，
+          才能安全地存入 LocalStorage。
+        */
+        const preferenceJSON =
+          JSON.stringify(preference);
+
+
+        /*
+          localStorage.setItem()
+
+          原因：
+          將轉換完成的 JSON 字串永久儲存在瀏覽器中。
+        */
+        localStorage.setItem(
+          PREFERENCE_KEY,
+          preferenceJSON
+        );
+
+
+        /*
+          回傳 true：
+
+          原因：
+          告訴呼叫這個函式的地方，
+          Preference 已成功儲存。
+        */
+        return true;
+
+      } catch (error) {
+
+        /*
+          try...catch
+
+          原因：
+          LocalStorage 可能因瀏覽器限制、
+          儲存空間不足或其他原因發生錯誤。
+
+          使用 catch 可以避免整個網站 JavaScript 中斷。
+        */
+        console.error(
+          'Preference 儲存失敗：',
+          error
+        );
+
+        return false;
+      }
+    }
+
+
+    /* =========================================================
+       5. 讀取 Preference
+       =========================================================
+
+       原因：
+       負責從 LocalStorage 取得使用者之前儲存的設定。
+
+       主要流程：
+
+       LocalStorage
+            ↓
+       JSON 字串
+            ↓
+       JSON.parse()
+            ↓
+       JavaScript Object
+    ========================================================= */
+
+    function getPreference() {
+
+      try {
+
+        /*
+          localStorage.getItem()
+
+          原因：
+          從 LocalStorage 取得 Preference。
+
+          如果不存在資料，
+          getItem() 會回傳 null。
+        */
+        const preferenceJSON =
+          localStorage.getItem(PREFERENCE_KEY);
+        .console.log(從localstorge);
+        
+
+
+        /*
+          防呆：
+
+          如果沒有資料，
+          直接回傳預設 Preference。
+
+          原因：
+          避免後續程式拿到 null。
+        */
+        if (!preferenceJSON) {
+
+          return {
+            ...DEFAULT_PREFERENCE
+          };
+        }
+
+
+        /*
+          JSON.parse()
+
+          原因：
+          LocalStorage 裡面存的是 JSON 字串，
+          必須使用 JSON.parse() 還原成 JavaScript Object。
+        */
+        const preference =
+          JSON.parse(preferenceJSON);
+
+
+        /*
+          防呆：
+
+          確認解析後的資料確實是一個 Object。
+
+          原因：
+          防止 LocalStorage 裡面被寫入錯誤格式。
+        */
+        if (
+          !preference ||
+          typeof preference !== 'object' ||
+          Array.isArray(preference)
+        ) {
+
+          return {
+            ...DEFAULT_PREFERENCE
+          };
+        }
+
+
+        /*
+          驗證 theme。
+
+          原因：
+          只允許 dark 或 light。
+
+          如果 LocalStorage 裡面出現：
+
+          theme: 'abc'
+
+          就使用預設的 dark。
+        */
+        const theme =
+          preference.theme === 'dark' ||
+          preference.theme === 'light'
+            ? preference.theme
+            : DEFAULT_PREFERENCE.theme;
+
+
+        /*
+          驗證 notify。
+
+          原因：
+          notify 必須是真正的 Boolean。
+
+          合法：
+
+          true
+          false
+
+          不接受：
+
+          "true"
+          "false"
+          1
+          0
+        */
+        const notify =
+          typeof preference.notify === 'boolean'
+            ? preference.notify
+            : DEFAULT_PREFERENCE.notify;
+
+
+        /*
+          回傳經過驗證的 Preference。
+
+          原因：
+          不直接信任 LocalStorage 裡的資料，
+          而是先驗證再交給網站使用。
+        */
+        return {
+          theme: theme,
+          notify: notify
+        };
+
+      } catch (error) {
+
+        /*
+          JSON.parse() 如果遇到損壞的 JSON，
+          會直接拋出錯誤。
+
+          使用 try...catch 可以防止網站程式中斷。
+        */
+        console.error(
+          'Preference 讀取失敗：',
+          error
+        );
+
+
+        /*
+          發生錯誤時回傳預設設定。
+
+          原因：
+          即使 LocalStorage 資料損壞，
+          網站仍然可以正常運作。
+        */
+        return {
+          ...DEFAULT_PREFERENCE
+        };
+      }
+    }
+
+
+    /* =========================================================
+       6. 套用 Theme
+       =========================================================
+
+       原因：
+       將 Preference 裡面的 theme
+       真正套用到網站 UI。
+    ========================================================= */
+
+    function applyTheme(theme) {
+
+      /*
+        dark：
+        在 body 加入 dark class。
+      */
+      if (theme === 'dark') {
+
+        document.body.classList.add('dark');
+
+      } else {
+
+        /*
+          light：
+          移除 dark class，
+          回到預設的 Light Theme。
+        */
+        document.body.classList.remove('dark');
+      }
+    }
+
+
+    /* =========================================================
+       7. 將 Preference 套用到 UI
+       =========================================================
+
+       原因：
+       網頁載入時，需要把 LocalStorage 裡面的資料
+       同步到下拉選單與通知開關。
+    ========================================================= */
+
+    function applyPreference(preference) {
+
+      /*
+        套用 Theme。
+      */
+      applyTheme(preference.theme);
+
+
+      /*
+        更新 Theme Select。
+
+        原因：
+        讓畫面上的下拉選單
+        和 LocalStorage 的資料保持一致。
+      */
+      themeSelect.value =
+        preference.theme;
+
+
+      /*
+        更新通知 Toggle。
+
+        原因：
+        讓通知開關
+        和 LocalStorage 的資料保持一致。
+      */
+      notifyToggle.checked =
+        preference.notify;
+    }
+
+
+    /* =========================================================
+       8. 更新 Debug 顯示
+       =========================================================
+
+       原因：
+       方便在 VS Code / 瀏覽器測試時，
+       直接看到 LocalStorage 裡面實際存了什麼。
+    ========================================================= */
+
+    function updateStorageDisplay() {
+
+      const storageData =
+        localStorage.getItem(PREFERENCE_KEY);
+
+
+      /*
+        如果沒有資料，就顯示尚未儲存。
+      */
+      if (!storageData) {
+
+        storageOutput.textContent =
+          'LocalStorage 尚未儲存 Preference';
+
+        return;
+      }
+
+
+      /*
+        顯示 LocalStorage 實際儲存的 JSON 字串。
+      */
+      storageOutput.textContent =
+        storageData;
+    }
+
+
+    /* =========================================================
+       9. 顯示操作狀態
+       ========================================================= */
+
+    function setStatus(message) {
+
+      statusText.textContent = message;
+    }
+
+
+    /* =========================================================
+       10. Theme Select 事件
+       =========================================================
+
+       原因：
+       使用者改變主題時，
+       立即更新畫面。
+
+       注意：
+       這裡使用 addEventListener，
+       不使用 HTML onclick，
+       可以讓 HTML 與 JavaScript 分離。
+    ========================================================= */
+
+    themeSelect.addEventListener(
+      'change',
+      function () {
+
+        const selectedTheme =
+          themeSelect.value;
+
+
+        /*
+          立即套用主題。
+        */
+        applyTheme(selectedTheme);
+
+
+        setStatus(
+          '主題已變更，請按「儲存 Preference」保存。'
+        );
+      }
+    );
+
+
+    /* =========================================================
+       11. 儲存按鈕事件
+       ========================================================= */
+
+    saveButton.addEventListener(
+      'click',
+      function () {
+
+        /*
+          從目前 UI 取得使用者選擇。
+        */
+        const preference = {
+
+          theme: themeSelect.value,
+
+          notify: notifyToggle.checked
+        };
+
+
+        /*
+          呼叫 savePreference()。
+
+          savePreference() 內部會執行 JSON.stringify()。
+        */
+        const success =
+          savePreference(preference);
+
+
+        if (success) {
+
+          setStatus(
+            '✓ Preference 已成功儲存！'
+          );
+
+        } else {
+
+          setStatus(
+            '✕ Preference 儲存失敗。'
+          );
+        }
+
+
+        /*
+          更新畫面上的 LocalStorage Debug。
+        */
+        updateStorageDisplay();
+      }
+    );
+
+
+    /* =========================================================
+       12. 清除 Preference
+       =========================================================
+
+       原因：
+       測試「LocalStorage 沒有資料」的情境。
+
+       清除之後重新整理網頁，
+       getPreference() 就會回傳 DEFAULT_PREFERENCE。
+    ========================================================= */
+
+    resetButton.addEventListener(
+      'click',
+      function () {
+
+        /*
+          移除指定的 LocalStorage 資料。
+        */
+        localStorage.removeItem(
+          PREFERENCE_KEY
+        );
+
+
+        /*
+          重新取得 Preference。
+
+          因為現在 LocalStorage 已經沒有資料，
+          所以會自動取得 DEFAULT_PREFERENCE。
+        */
+        const preference =
+          getPreference();
+
+
+        /*
+          將預設 Preference 套用到畫面。
+        */
+        applyPreference(preference);
+
+
+        /*
+          更新狀態。
+        */
+        setStatus(
+          'Preference 已清除，現在使用預設設定。'
+        );
+
+
+        /*
+          更新 LocalStorage Debug。
+        */
+        updateStorageDisplay();
+      }
+    );
+
+
+    /* =========================================================
+       13. 網頁第一次載入
+       =========================================================
+
+       原因：
+       網頁重新整理時，
+       必須先從 LocalStorage 讀取之前的 Preference。
+
+       如果沒有資料，
+       getPreference() 會自動回傳：
+
+       {
+         theme: 'dark',
+         notify: true
+       }
+    ========================================================= */
+
+    const initialPreference =
+      getPreference();
+
+
+    /*
+      將讀取到的 Preference 套用到畫面。
+    */
+    applyPreference(
+      initialPreference
+    );
+
+
+    /*
+      顯示目前 LocalStorage 資料。
+    */
+    updateStorageDisplay();
+
+
+    /*
+      顯示初始狀態。
+    */
+    setStatus(
+      'Preference 已載入完成。'
+    );
+
+  </script>
+
+</body>
+
+</html>

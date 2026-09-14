@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>javascript基礎教學</title>
+  </head>
+  <body>
+    <script>
+      // 以下測試用網頁瀏覽F12並開啟 點cosle查看變化
+
+      
+      // function sayHello() {
+      // 舊式寫法
+      //   console.log("Hello hello");
+      // sayHello();
+      // sayHello();
+      // sayHello();
+      // sayHello();
+      // // sayHello();
+      // }
+
+      // const sayHello = () => {
+      //   // 新寫法
+      //   console.log("hello hello");
+      //   sayhello();
+      //   sayhello();
+      //   sayhello();
+      //   sayhello();
+      // };
+
+      // const user = { name, age }; // 舊式寫法
+      // console.log(user.name);
+      // console.log(user.age);
+
+      // const { name, age } = user; // 新寫法
+      // console.log(name);
+      // console.log(age);
+
+      let a = 14;
+      let b = 10;
+      let c = "30"; //用""就不是數字
+      console.log(a + b);
+      console.log(b + c);
+      console.log(a + b + c);
+      console.log(c + b + a);
+
+      //用Number()把文字強制變成數字
+      console.log(a + b + Number(c));
+      console.log(c + b + a);
+
+      //空值 = null
+      //沒給數值 也是空值
+      //兩者計算結果都是NaN [Not A Number意思]
+      let d =null;
+      let f;
+      console.log(d+10);
+      console.log(f+10);
+
+
+    </script>
+  </body>
+</html>

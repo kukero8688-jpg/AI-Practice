@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>LocalStorage 基礎示範</title>
+</head>
+<body>
+  <h1>LocalStorage 基礎示範</h1>
+  <button id="writeButton">寫入數據</button>
+  <button id="readButton">讀取數據</button>
+  <button id="removeButton">移除單一數據</button>
+  <button id="clearButton">清除所有數據</button>
+  <p id="result">操作結果會顯示在這裡</p>
+
+  <script>
+    // 取得用來顯示操作結果的 HTML 元素。
+    const result = document.querySelector('#result');
+
+    // 監聽「寫入數據」按鈕的點擊事件。
+    document.querySelector('#writeButton').addEventListener('click', () => {
+      // 使用 setItem() 將字串資料寫入 LocalStorage，第一個參數是資料名稱。
+      localStorage.setItem('username', '王德發');
+      // 將寫入成功的訊息顯示在網頁上。
+      result.textContent = '已寫入 username：王德發';
+    });
+
+    // 監聽「讀取數據」按鈕的點擊事件。
+    document.querySelector('#readButton').addEventListener('click', () => {
+      // 使用 getItem() 讀取指定名稱的資料，找不到時會得到 null。
+      const username = localStorage.getItem('username');
+      // 將讀取到的資料顯示在網頁上。
+      result.textContent = username === null ? '找不到 username' : `讀取到 username：${username}`;
+    });
+
+    // 監聽「移除單一數據」按鈕的點擊事件。
+    document.querySelector('#removeButton').addEventListener('click', () => {
+      // 使用 removeItem() 移除名稱為 username 的單一資料。
+      localStorage.removeItem('username');
+      // 將移除成功的訊息顯示在網頁上。
+      result.textContent = '已移除 username';
+    });
+
+    // 監聽「清除所有數據」按鈕的點擊事件。
+    document.querySelector('#clearButton').addEventListener('click', () => {
+      // 使用 clear() 清除目前網域儲存的所有 LocalStorage 資料。
+      localStorage.clear();
+      // 將清除成功的訊息顯示在網頁上。
+      result.textContent = '已清除所有 LocalStorage 數據';
+    });
+  </script>
+</body>
+</html>

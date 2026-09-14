@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!-- 告訴瀏覽器這是一份 HTML5 文件。 -->
+<html lang="zh-Hant">
+<!-- 設定網頁主要使用繁體中文。 -->
+<head>
+  <!-- 設定文字編碼，避免中文顯示成亂碼。 -->
+  <meta charset="UTF-8">
+  <!-- 設定瀏覽器分頁上顯示的標題。 -->
+  <title>SessionStorage 基礎示範</title>
+</head>
+<!-- head 結束，接下來是網頁內容。 -->
+<body>
+  <!-- 顯示這個練習的主題。 -->
+  <h1>SessionStorage 基礎示範</h1>
+  <!-- 提醒使用者 sessionStorage 的資料只存在目前瀏覽器工作階段。 -->
+  <p>關閉目前分頁或瀏覽器後，資料就會消失。</p>
+  <!-- 建立寫入資料的按鈕。 -->
+  <button id="writeButton">寫入數據</button>
+  <!-- 建立讀取資料的按鈕。 -->
+  <button id="readButton">讀取數據</button>
+  <!-- 建立移除單一資料的按鈕。 -->
+  <button id="removeButton">移除單一數據</button>
+  <!-- 建立清除目前工作階段所有資料的按鈕。 -->
+  <button id="clearButton">清除所有數據</button>
+  <!-- 建立顯示操作結果的段落。 -->
+  <p id="result">操作結果會顯示在這裡</p>
+
+  <!-- 開始撰寫 JavaScript 程式。 -->
+  <script>
+    // 取得用來顯示操作結果的 HTML 元素。
+    const result = document.querySelector('#result');
+
+    // 監聽「寫入數據」按鈕的點擊事件。
+    document.querySelector('#writeButton').addEventListener('click', () => {
+      // 使用 setItem() 將字串資料寫入 SessionStorage，第一個參數是資料名稱。
+      sessionStorage.setItem('username', '王德發');
+      // 將寫入成功的訊息顯示在網頁上。
+      result.textContent = '已寫入 username：王德發；關閉分頁後資料會消失。';
+    });
+
+    // 監聽「讀取數據」按鈕的點擊事件。
+    document.querySelector('#readButton').addEventListener('click', () => {
+      // 使用 getItem() 讀取指定名稱的資料，找不到時會得到 null。
+      const username = sessionStorage.getItem('username');
+      // 將讀取到的資料顯示在網頁上。
+      result.textContent = username === null ? '找不到 username' : `讀取到 username：${username}`;
+    });
+
+    // 監聽「移除單一數據」按鈕的點擊事件。
+    document.querySelector('#removeButton').addEventListener('click', () => {
+      // 使用 removeItem() 移除名稱為 username 的單一資料。
+      sessionStorage.removeItem('username');
+      // 將移除成功的訊息顯示在網頁上。
+      result.textContent = '已移除 username';
+    });
+
+    // 監聽「清除所有數據」按鈕的點擊事件。
+    document.querySelector('#clearButton').addEventListener('click', () => {
+      // 使用 clear() 清除目前工作階段儲存的所有 SessionStorage 資料。
+      sessionStorage.clear();
+      // 將清除成功的訊息顯示在網頁上。
+      result.textContent = '已清除所有 SessionStorage 數據';
+    });
+  </script>
+<!-- body 結束。 -->
+</body>
+<!-- HTML 文件結束。 -->
+</html>
